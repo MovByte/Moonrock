@@ -1,7 +1,6 @@
 {
   "name": "moonrock",
   "version": "0.1.0",
-  "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.1.0",
@@ -9,6 +8,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.0.4",
+    "react-router-dom": "^6.21.1",
     "react-scripts": "^5.0.1",
     "redux": "^5.0.1",
     "web-vitals": "^3.5.0"
