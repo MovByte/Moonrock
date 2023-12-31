@@ -49,14 +49,16 @@ function GameList({ games }) {
 
 function App() {
  const games = [
-    { title: 'Game 1', image: 'https://via.placeholder.com/200' },
-    { title: 'Game 2', image: 'https://via.placeholder.com/200' },
+    { name: 'Game 1', image: 'https://i.imgur.com/cwqrqc4.jpg' },
+    { name: 'Game 2', image: 'https://i.imgur.com/cwqrqc4.jpg' },
+    { name: 'Game 3', image: 'https://i.imgur.com/cwqrqc4.jpg' }, 
  ];
+   
 
  return (
     <div className="App">
       <header>
-        <h1>Title</h1>
+        <h1>Moonrock</h1>
         <nav>
           <a href="/">Home</a>
           <a href="/settings">Settings</a>
