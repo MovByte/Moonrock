@@ -1,23 +1,23 @@
 @import url(https://fonts.googleapis.com/css2?family=Rubik+Moonrocks&display=swap);
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-body{
+body {
     background-image: url(images/jaxa-moon.webp); 
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center;
 }
-section button{
+section button {
     padding: 0;
     border: none;
     background: none;
     transform: scale(1);
     transition: transform 0.3s ease-out;
 }
-section{
+section {
     position: sticky;
     top: 0;
     left: 0;
@@ -40,7 +40,7 @@ section{
     display: flex;
     align-items: center;
     border-radius: 60px;
-    padding: 10px 20px;
+    padding: 5px 10 px;
     margin: 60px;
     background-color: none;
     transform: scale(1);
@@ -52,9 +52,9 @@ section{
     border: 0;
     outline: none;
     padding: 24px 20px;
-    font-size: 20px;
+    font-size: 10px;
 }
-.search-bar button{
+.search-bar button {
     width: 60px;
     height: 60px;
     background: none;
@@ -63,32 +63,32 @@ section{
     transform: rotate(0deg);
     transition: transform 0.5s ease-out;
 }
-#searching{
+#searching {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100vh;
 }
-section button:hover{
+section button:hover {
     transform: scale(2);
     transition: transform 350ms ease-in-out;
 }
-.search-bar button:hover{
+.search-bar button:hover {
     transform: rotate(360deg);
     transition: transform 500ms ease-in-out;
 }
-.search-bar:hover{
-    transform: scale(1.25);
+.search-bar:hover {
+    transform: scale(1.1);
     transition: transform 500ms ease-in-out;
     box-shadow: 0px 0px 15px 5px gray;
 }
-div a:link, div a:visited, div a:active{
+div a:link, div a:visited, div a:active {
     text-decoration: none;
     color: gray;
     transition: 250ms ease-in-out;
 }
-div a:hover{
+div a:hover {
     color:white;
-    font-size: 150%;
+    font-size: 100%;
     text-shadow: 1px 1px 20px;
 }

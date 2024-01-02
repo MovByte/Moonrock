@@ -3,7 +3,7 @@ const app = express();
 const path = require('path');
 
 // Serve static files (your HTML, CSS, and images)
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public_html')));
 
 // Dummy search results
 const dummySearchResults = [
