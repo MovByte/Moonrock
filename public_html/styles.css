@@ -1,13 +1,11 @@
 @import url(https://fonts.googleapis.com/css2?family=Rubik+Moonrocks&display=swap);
 * {
-    margin: 0;
-    padding: 0;
     box-sizing: border-box;
 }
 body {
-    background-image: url(images/jaxa-moon.webp); 
+    background-image: url(images/moon.jpg); 
     background-repeat: no-repeat;
-    background-attachment: fixed;
+    background-size: cover;
     background-position: center;
 }
 section button {
@@ -40,10 +38,8 @@ section {
     display: flex;
     align-items: center;
     border-radius: 60px;
-    padding: 5px 10 px;
+    padding: 2.5px 5px;
     margin: 60px;
-    background-color: none;
-    transform: scale(1);
     transition: transform 0.3s ease-out;
 }
 .search-bar input {
@@ -52,12 +48,11 @@ section {
     border: 0;
     outline: none;
     padding: 24px 20px;
-    font-size: 10px;
+    font-size: 25px;
 }
 .search-bar button {
-    width: 60px;
+    width: 80px;
     height: 60px;
-    background: none;
     border: 0;
     border-radius: 50%;
     transform: rotate(0deg);
