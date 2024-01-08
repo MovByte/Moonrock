@@ -19,9 +19,8 @@ app.get('/search', async (req, res) => {
         .filter(result => result.recordType !== 'tag')
         .map(result => ({
           title: result.name,
-          gamelink: `https://www.crazygames.com/game/${result.slug}`,
           directGame: `https://games.crazygames.com/en-US/${result.slug}/index.html`,
-          cover: result.cover,
+          cover: `https://images.crazygames.com/${result.cover}`,
           mobileFriendly: result.mobileFriendly,
           androidFriendly: result.androidFriendly,
           iosFriendly: result.iosFriendly,
