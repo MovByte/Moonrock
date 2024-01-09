@@ -11,5 +11,5 @@ This is a search engine / aggregator for game sites. This project essentially gi
 ## Tech Used
 
 - [TS](https://www.typescriptlang.org)
-- [Lit](https://lit.dev)
-- [My Proxy SDK](https://hedge.soundar.eu.org/s/hLUaC8rns)
+- [Next.js](https://nextjs.org)
+- [Proxy Components](https://github.com/VyperGroup/Proxy-Components)
