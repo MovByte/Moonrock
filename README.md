@@ -3,10 +3,7 @@
 This is a search engine and aggregator for game sites. This project gives you all games on one site, is available offline, and, more importantly, Moonrock is free from legal issues, unlike the other game sites run by proxy networks.
 
 [Dev Docs](./DEV.md)
-
-## [Sketch](./first-sketch.jpg)
-
-> The Figma in the works by Dave
+[For UI designers](./For%20UI%20Designers.md)
 
 ## Tech Used
 
