@@ -9,13 +9,26 @@ app.get('/search', async (req, res) => {
     try {
       const searchTerm = req.query.q;
       const limit = req.query.limit || 10;
-      const apiUrl = `https://api.crazygames.com/v3/en_US/search?q=${searchTerm}&limit=${limit}&includeTopGames=true`;
-      const response = await fetch(apiUrl);
-      if (!response.ok) {
+      const crazyGamesApiUrl = `https://api.crazygames.com/v3/en_US/search?q=${searchTerm}&limit=${limit}&includeTopGames=true`;
+      const yandexGamesApiUrl = `https://yandex.com/games/api/catalogue/v3/search/?query=${searchTerm}&games_count=${limit}`;
+      const crazyGamesApiresponse = await fetch(crazyGamesApiUrl);
+      const yandexGamesApiResponse = await fetch(yandexGamesApiUrl);
+      if (!crazyGamesApiresponse.ok) {
         throw new Error(`Failed to fetch data from CrazyGames API (${response.status} ${response.statusText})`);
       }
-      const data = await response.json();
-      const searchResults = data.result
+      if (!yandexGamesApiResponse.ok) {
+        throw new Error(`Failed to fetch data from Yandex Games API (${yandexGamesApiResponse.status} ${yandexGamesApiResponse.statusText})`);
+      }
+      const searchResultsYandexGames = yandexGamesApiResponse.json().then(response => {
+        return response.feed[0].items.map(item => ({
+          title: item.title,
+          directGame: `https://yandex.com/games/app/${item.appID}`,
+          cover: item.media.cover.prefix-url,
+          playersCount: item.playersCount,
+          rating: item.rating,
+        }));
+      });
+      const searchResultsCrazyGames = await crazyGamesApiresponse.json().result
         .filter(result => result.recordType !== 'tag')
         .map(result => ({
           title: result.name,
@@ -25,7 +38,7 @@ app.get('/search', async (req, res) => {
           androidFriendly: result.androidFriendly,
           iosFriendly: result.iosFriendly,
         }));
-      res.json(searchResults);
+      res.json(searchResultsYandexGames);
     } catch (error) {
       console.error('Error fetching search results:', error);
       res.status(500).json({ error: 'Internal Server Error' });
