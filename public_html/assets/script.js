@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(`/search?q=${searchTerm}`);
             const searchResults = await response.json();
+            console.log(searchResults);
             displaySearchResults(searchResults);
         } catch (error) {
             console.error('Error fetching search results:', error);

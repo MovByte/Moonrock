@@ -15,18 +15,17 @@ app.get('/search', async (req, res) => {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0',
         },
       });
-      console.log(yandexGamesApiResponse.json().result)
       if (!yandexGamesApiResponse.ok) {
         throw new Error(`Failed to fetch data from Yandex Games API (${yandexGamesApiResponse.status} ${yandexGamesApiResponse.statusText})`);
       }
-      const searchResultsYandexGames = yandexGamesApiResponse.json().then(response => {
-        return response.feed[0].items.map(item => ({
-          title: item.title,
-          directGame: `https://yandex.com/games/app/${item.appID}`,
-          cover: item.media.cover['prefix-url'],
-          rating: item.rating,
-        }));
-      });
+      //const searchResultsYandexGames = yandexGamesApiResponse.json().then(response => {
+      //  return response.feed[0].items.map(item => ({
+      //    title: item.title,
+      //    directGame: `https://yandex.com/games/app/${item.appID}`,
+      //    cover: item.media.cover['prefix-url'],
+      //    rating: item.rating,
+      //  }));
+      //});
       const crazyGamesApiUrl = `https://api.crazygames.com/v3/en_US/search?q=${searchTerm}&limit=${limit}&includeTopGames=true`;
       const crazyGamesApiResponse = await fetch(crazyGamesApiUrl, {
         headers: {
@@ -50,7 +49,7 @@ app.get('/search', async (req, res) => {
           mobileFriendly: result.mobileFriendly,
         }));
       //const combinedResults = [...searchResultsYandexGames, ...searchResultsCrazyGames];
-      res.json(searchResultsYandexGames);
+      res.json(searchResultsCrazyGames);
 
     } catch (error) {
       console.error('Error fetching search results:', error);
