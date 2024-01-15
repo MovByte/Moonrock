@@ -4,13 +4,21 @@
     "path": "^0.12.7"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "yarn:start": "yarn server.js",
+    "dev": "nodemon server.js",
+    "nodemon:dev": "nodemon server.js",
+    "yarn:install": "yarn install",
+    "yarn:import": "yarn import"
   },
   "name": "moonrock",
   "main": "server.js",
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/VyperGroup/Moonrock.git"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "yarn": "^1.22.21"
   }
 }
