@@ -26,8 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 gameElement.innerHTML = `
                     <h3>${result.title}</h3>
                     <p>Mobile Friendly: ${result.mobileFriendly}</p>
-                    <p>Android Friendly: ${result.androidFriendly}</p>
-                    <p>iOS Friendly: ${result.iosFriendly}</p>
                     <a href="${result.directGame}" target="_blank">Play Game</a>
                     <img src="${result.cover}" alt="${result.title} Cover">
                 `;
