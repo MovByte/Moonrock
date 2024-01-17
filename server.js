@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 const path = require('path');
+const { BareClient, createBareClient } = import('@tomphttp/bare-client');
+const client = await createBareClient('https://uv.holyubofficial.net/');
 
 app.use(express.static(path.join(__dirname, 'public_html')));
 
