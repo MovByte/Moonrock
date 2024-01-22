@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "@tomphttp/bare-client": "^2.2.0-alpha",
     "express": "^4.18.2",
     "path": "^0.12.7"
   },
