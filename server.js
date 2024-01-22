@@ -34,7 +34,6 @@ app.get('/search', async (req, res) => {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0',
         },
       });
-      console.log(crazyGamesApiResponse.result)
       if (!crazyGamesApiResponse.ok) {
         throw new Error(`Failed to fetch data from CrazyGames API (${crazyGamesApiResponse.status} ${crazyGamesApiResponse.statusText})`);
       }
