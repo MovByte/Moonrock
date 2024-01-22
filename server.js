@@ -50,9 +50,27 @@ app.get('/search', async (req, res) => {
           cover: `https://images.crazygames.com/${result.cover}`,
           mobileFriendly: result.mobileFriendly,
         }));
-      //const combinedResults = [...searchResultsYandexGames, ...searchResultsCrazyGames];
-      res.json(searchResultsCrazyGames);
 
+      const flashPointApiUrl = `https://db-api.unstable.life/search?smartSearch=${searchTerm}&filter=true&fields=id,title,developer,publisher,platform,tags,originalDescription`;
+      const flashPointApiResponse = await fetch(flashPointApiUrl);
+      if (!flashPointApiResponse.ok) {
+        throw new Error(`Failed to fetch data from FlashPoint API (${flashPointApiResponse.status} ${flashPointApiResponse.statusText})`);
+      }
+      const flashPointResponseJson = await flashPointApiResponse.json();
+      if (!flashPointResponseJson || !Array.isArray(flashPointResponseJson)) {
+        throw new Error('Unexpected response format from FlashPoint API');
+      }
+      const searchResultsFlashPoint = flashPointResponseJson
+        .filter(result => result.platform === 'Flash')
+        .map(result => ({
+          id: result.id,
+          title: result.title,
+          developer: result.developer,
+          publisher: result.publisher,
+          cover: `https://infinity.unstable.life/images/Logos/${result.id.substring(0,2)}/${result.id.substring(2,4)}/${result.id}.png?type=jpg`
+        }));
+      //const combinedResults = [...searchResultsYandexGames, ...searchResultsCrazyGames];
+      res.json(searchResultsFlashPoint);
     } catch (error) {
       console.error('Error fetching search results:', error);
       res.status(500).json({ error: 'Internal Server Error' });
