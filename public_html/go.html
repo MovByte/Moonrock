@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <title>Moonrock - Vyper Group</title>
     <link rel="stylesheet" href="assets/styles.css" />
-    <!--<script src="assets/script.js"></script>-->
 </head>
 <body>
     <section class="navbar">
@@ -13,9 +12,13 @@
             <a href="#" id="privacyPolicyButton">Privacy Policy</a>
         </div>
     </section>
-    <container id="searching">
-        <iframe src=""></iframe>
-    </container>
-    <section id="search-results"></section>
+    <iframe src="loading.html" id="iframeid"></iframe>
+    <script>
+        window.onload = function() {
+            var iframe = document.getElementById("iframe");
+            let URL = sessionStorage.getItem("URL");
+            document.querySelector("#iframeid").src = URL;
+        }
+    </script>
 </body>
 </html>
