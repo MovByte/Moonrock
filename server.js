@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-
 const querylimit = process.env.QUERY_LIMIT || 10;
 
 app.use(express.static(path.join(__dirname, 'public_html')));
