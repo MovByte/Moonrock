@@ -27,7 +27,7 @@ section {
     align-items: center;
     font-size: 30px;
     padding: 20px 50px;
-    word-spacing: 50px;
+    word-spacing: 10px;
     backdrop-filter: blur(10px);
 }
 .search-bar {

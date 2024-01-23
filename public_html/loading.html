@@ -7,7 +7,6 @@
     <title>Loading...</title>
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Inter&family=Rubik+Mono+One&display=swap');
-
       html,
       body {
         background-color: #202124;
@@ -15,39 +14,32 @@
         height: 100%;
         margin: 0;
       }
-
       p {
         color: white;
         font-family: 'Rubik Mono One', sans-serif;
         font-size: 2em;
         display: inline-block;
       }
-
       .loading {
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100%;
       }
-
       .dots::after {
         content: ".";
         animation: blink 2s infinite;
       }
-
       @keyframes blink {
         0% {
           content: ".";
         }
-
         33% {
           content: "..";
         }
-
         66% {
           content: "...";
         }
-
         100% {
           content: ".";
         }
