@@ -1,6 +1,5 @@
 const express = require('express');
-import * as Sentry from "@sentry/node";
-import { ProfilingIntegration } from "@sentry/profiling-node";
+const Sentry = require("@sentry/node");
 const app = express();
 const path = require('path');
 const querylimit = process.env.QUERY_LIMIT || 10;
@@ -9,8 +8,7 @@ Sentry.init({
   dsn: "https://5d0bb6f7ed2a2a3071a939a10a5d4ed7@o4506314609393664.ingest.sentry.io/4506620667559936",
   integrations: [
     new Sentry.Integrations.Http({ tracing: true }),
-    new Sentry.Integrations.Express({ app }),
-    new ProfilingIntegration(),
+    new Sentry.Integrations.Express({ app })
   ],
   tracesSampleRate: 1.0,
   profilesSampleRate: 1.0,
