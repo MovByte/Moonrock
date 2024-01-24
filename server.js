@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const querylimit = process.env.QUERY_LIMIT || 10;
+require('dotenv').config();
 
 app.use(express.static(path.join(__dirname, 'public_html')));
 
@@ -9,7 +9,8 @@ app.get('/search', async (req, res) => {
   if (req.query.q) {
     try {
       const searchTerm = req.query.q;
-      const limit = req.query.limit || querylimit;
+      const limit = req.query.limit || proccess.env.QUERY_LIMIT || 10;
+      const filternfsw = req.query.filternfsw || process.env.filternfsw || true;
       //const yandexGamesApiUrl = `https://yandex.com/games/api/catalogue/v3/search/?query=${searchTerm}&games_count=${limit}`;
       //const yandexGamesApiResponse = await fetch(yandexGamesApiUrl);
       //if (!yandexGamesApiResponse.ok) {
@@ -48,7 +49,6 @@ app.get('/search', async (req, res) => {
           cover: `https://images.crazygames.com/${result.cover}`,
           mobileFriendly: result.mobileFriendly,
         }));
-
       const flashpointApiUrl = `https://db-api.unstable.life/search?smartSearch=${searchTerm}&filter=true&fields=id,title,developer,publisher,platform,tags,originalDescription`;
       const flashpointApiResponse = await fetch(flashpointApiUrl);
       if (!flashpointApiResponse.ok) {
