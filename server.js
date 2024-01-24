@@ -5,29 +5,27 @@ require('dotenv').config();
 
 app.use(express.static(path.join(__dirname, 'public_html')));
 
-app.get('/search', async (req, res) => {
+app.use('/search', async (req, res) => {
   if (req.query.q) {
     try {
       const searchTerm = req.query.q;
-      const limit = req.query.limit || proccess.env.QUERY_LIMIT || 10;
+      const limit = req.query.limit || process.env.QUERY_LIMIT || 10;
       const filternfsw = req.query.filternfsw || process.env.filternfsw || true;
-      //const yandexGamesApiUrl = `https://yandex.com/games/api/catalogue/v3/search/?query=${searchTerm}&games_count=${limit}`;
-      //const yandexGamesApiResponse = await fetch(yandexGamesApiUrl);
-      //if (!yandexGamesApiResponse.ok) {
-      //  throw new Error(`Failed to fetch data from Yandex Games API (${yandexGamesApiResponse.status} ${yandexGamesApiResponse.statusText})`);
-      //}
-      //const yandexGamesResponseJson = await yandexGamesApiResponse.json();
-      //if (!yandexGamesResponseJson || !yandexGamesResponseJson.feed || !Array.isArray(yandexGamesResponseJson.feed)) {
-      //  throw new Error('Unexpected response format from Yandex Games API');
-      //}
-      //const searchResultsYandexGames = yandexGamesApiResponse.json().then(response => {
-      //  return response.feed[0].items.map(item => ({
-      //    title: item.title,
-      //    directGame: `https://yandex.com/games/app/${item.appID}`,
-      //    cover: item.media.cover['prefix-url'],
-      //    rating: item.rating,
-      //  }));
-      //});
+      const yandexGamesApiUrl = `https://yandex.com/games/api/catalogue/v3/search/?query=${searchTerm}&games_count=${limit}`;
+      const yandexGamesApiResponse = await fetch(yandexGamesApiUrl);
+      if (!yandexGamesApiResponse.ok) {
+        throw new Error(`Failed to fetch data from Yandex Games API (${yandexGamesApiResponse.status} ${yandexGamesApiResponse.statusText})`);
+      }
+      const yandexGamesResponseJson = await yandexGamesApiResponse.json();
+      if (!yandexGamesResponseJson || !yandexGamesResponseJson.feed || !Array.isArray(yandexGamesResponseJson.feed)) {
+        throw new Error('Unexpected response format from Yandex Games API');
+      }
+      const searchResultsYandexGames = await yandexGamesResponseJson.feed[0].items.map(item => ({
+          title: item.title,
+          directGame: `https://yandex.com/games/app/${item.appID}`,
+          cover: item.media.cover['prefix-url'],
+          ageRating: item.features.age_rating,
+        }));
       const crazyGamesApiUrl = `https://api.crazygames.com/v3/en_US/search?q=${searchTerm}&limit=${limit}&includeTopGames=true`;
       const crazyGamesApiResponse = await fetch(crazyGamesApiUrl, {
         headers: {
@@ -45,7 +43,7 @@ app.get('/search', async (req, res) => {
         .filter(result => result.recordType !== 'tag')
         .map(result => ({
           title: result.name,
-          directGame: `https://games.crazygames.com/en-US/${result.slug}/index.html`,
+          directLink: `https://games.crazygames.com/en-US/${result.slug}/index.html`,
           cover: `https://images.crazygames.com/${result.cover}`,
           mobileFriendly: result.mobileFriendly,
         }));
@@ -70,7 +68,7 @@ app.get('/search', async (req, res) => {
           directLink: `https://ooooooooo.ooo/?${result.id}`,
         }));
       //const combinedResults = [...searchResultsYandexGames, ...searchResultsCrazyGames, ...searchResultsFlashpoint];
-      res.json(searchResultsFlashpoint);
+      res.json(searchResultsYandexGames);
     } catch (error) {
       console.error('Error fetching search results:', error);
       res.status(500).json({ error: 'Internal Server Error' });

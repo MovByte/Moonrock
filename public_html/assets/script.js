@@ -25,8 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 gameElement.classList.add('search-result');
                 gameElement.innerHTML = `
                     <h3>${result.title}</h3>
-                    <p>Mobile Friendly: ${result.mobileFriendly}</p>
-                    <a href="${result.directGame}" target="_blank">Play Game</a>
+                    <!--<p>Mobile Friendly: ${result.mobileFriendly}</p>-->
+                    <a href="${result.directLink}" target="_blank">Play Game</a>
                     <img src="${result.cover}" alt="${result.title} Cover">
                 `;
                 searchResultsSection.appendChild(gameElement);

@@ -1,5 +1,5 @@
 async function gamesApi() {
-    const apiUrl = `https://yandex.com/games/api/catalogue/v3/search/?query=Minecraft`;
+    const apiUrl = `https://yandex.com/games/api/catalogue/v3/search/?query=Worm`;
         try {
             const apiResponse = await fetch(apiUrl, {
                 "credentials": "include",
@@ -16,10 +16,7 @@ async function gamesApi() {
                 "method": "GET",
                 "mode": "cors"
             });
-            console.log(apiResponse)
-            console.log(apiResponse.result)
             const responseJson = await apiResponse.json();
-            console.log(responseJson.result)
             console.log(responseJson)
     } catch (error) {
         console.error('Error fetching search results:', error);
