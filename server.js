@@ -55,17 +55,19 @@ app.get('/search', async (req, res) => {
         throw new Error(`Failed to fetch data from Flashpoint API (${flashpointApiResponse.status} ${flashpointApiResponse.statusText})`);
       }
       const flashpointResponseJson = await flashpointApiResponse.json();
-      if (!flashPointResponseJson || !Array.isArray(flashpointResponseJson)) {
+      if (!flashpointResponseJson || !Array.isArray(flashpointResponseJson)) {
         throw new Error('Unexpected response format from Flashpoint API');
       }
       const searchResultsFlashpoint = flashpointResponseJson
         .filter(result => result.platform === 'Flash')
         .map(result => ({
-          id: result.id,
+          id: result.id,          
           title: result.title,
           developer: result.developer,
           publisher: result.publisher,
-          cover: `https://infinity.unstable.life/images/Logos/${result.id.substring(0,2)}/${result.id.substring(2,4)}/${result.id}.png?type=jpg`
+          description: result.originalDescription,
+          cover: `https://infinity.unstable.life/images/Logos/${result.id.substring(0,2)}/${result.id.substring(2,4)}/${result.id}.png?type=jpg`,
+          directLink: `https://ooooooooo.ooo/?${result.id}`,
         }));
       //const combinedResults = [...searchResultsYandexGames, ...searchResultsCrazyGames, ...searchResultsFlashpoint];
       res.json(searchResultsFlashpoint);
