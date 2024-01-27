@@ -23,7 +23,7 @@ app.use('/search', async (req, res) => {
       }
       const searchResultsYandexGames = await yandexGamesResponseJson.feed[0].items.map(item => ({
           title: item.title,
-          directGame: `https://yandex.com/games/app/${item.appID}`,
+          directLink: `https://yandex.com/games/app/${item.appID}`,
           cover: `${item.media.cover['prefix-url']}pjpg256x256`,
           ageRating: item.features.age_rating,
         }));
@@ -70,7 +70,7 @@ app.use('/search', async (req, res) => {
         }));
       //const combinedResults = [...searchResultsYandexGames, ...searchResultsCrazyGames, ...searchResultsFlashpoint];
       //const combinedResults = { yandexGames: searchResultsYandexGames, crazyGames: searchResultsCrazyGames, flashpoint: searchResultsFlashpoint };
-      res.json(searchResultsYandexGames);
+      res.json(searchResultsCrazyGames);
     } catch (error) {
       console.error('Error fetching search results:', error);
       res.status(500).json({ error: 'Internal Server Error' });

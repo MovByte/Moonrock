@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3>${result.title}</h3>
                     <!--<p>Mobile Friendly: ${result.mobileFriendly}</p>-->
                     <!--<p>Age Rating: ${result.ageRating}</p>-->
-                    <a href="${result.directLink}" target="_blank">Play Game</a>
+                    <a onclick="playGame('${result.directLink}')" target="_blank">Play Game</a>
                     <img src="${result.cover}" alt="${result.title} Cover">
                 `;
                 searchResultsSection.appendChild(gameElement);
@@ -37,3 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 });
+function playGame(url) {
+    localStorage.setItem('URL', url);
+    window.location.href = 'go.html';
+}

@@ -26,9 +26,9 @@
     </section>
     <iframe src="loading.html" id="iframeid"></iframe>
     <script>
-        window.onload = function() {            
-            let URL = sessionStorage.getItem("URL");
-            //document.querySelector("#iframeid").src = URL;
+        window.onload = function() {
+            let URL = localStorage.getItem("URL");
+            document.querySelector("#iframeid").src = URL;
         }
     </script>
 </body>
