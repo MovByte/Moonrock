@@ -11,7 +11,6 @@ app.use('/search', async (req, res) => {
     try {
       const searchTerm = req.query.q;
       const limit = req.query.limit || process.env.QUERY_LIMIT || 10;
-      const filternfsw = req.query.filternfsw || process.env.filternfsw || true;
       const yandexGamesApiUrl = `https://yandex.com/games/api/catalogue/v3/search/?query=${searchTerm}&games_count=${limit}`;
       const yandexGamesApiResponse = await fetch(yandexGamesApiUrl);
       if (!yandexGamesApiResponse.ok) {
