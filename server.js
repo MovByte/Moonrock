@@ -6,6 +6,7 @@ require('dotenv').config();
 app.use(express.static(path.join(__dirname, 'public_html')));
 
 app.use('/search', async (req, res) => {
+  console.log('Query:', req.query)
   if (req.query.q) {
     try {
       const searchTerm = req.query.q;
@@ -23,7 +24,7 @@ app.use('/search', async (req, res) => {
       const searchResultsYandexGames = await yandexGamesResponseJson.feed[0].items.map(item => ({
           title: item.title,
           directGame: `https://yandex.com/games/app/${item.appID}`,
-          cover: item.media.cover['prefix-url'],
+          cover: `${item.media.cover['prefix-url']}pjpg256x256`,
           ageRating: item.features.age_rating,
         }));
       const crazyGamesApiUrl = `https://api.crazygames.com/v3/en_US/search?q=${searchTerm}&limit=${limit}&includeTopGames=true`;
@@ -68,6 +69,7 @@ app.use('/search', async (req, res) => {
           directLink: `https://ooooooooo.ooo/?${result.id}`,
         }));
       //const combinedResults = [...searchResultsYandexGames, ...searchResultsCrazyGames, ...searchResultsFlashpoint];
+      //const combinedResults = { yandexGames: searchResultsYandexGames, crazyGames: searchResultsCrazyGames, flashpoint: searchResultsFlashpoint };
       res.json(searchResultsYandexGames);
     } catch (error) {
       console.error('Error fetching search results:', error);
