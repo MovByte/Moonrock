@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <!--<p>Mobile Friendly: ${result.mobileFriendly}</p>-->
                     <!--<p>Age Rating: ${result.ageRating}</p>-->
                     <a onclick="playGame('${result.directLink}')" target="_blank">Play Game</a>
-                    <img src="${result.cover}" alt="${result.title} Cover">
+                    <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
                 `;
                 searchResultsSection.appendChild(gameElement);
             });

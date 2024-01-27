@@ -67,9 +67,9 @@ app.use('/search', async (req, res) => {
           cover: `https://infinity.unstable.life/images/Logos/${result.id.substring(0,2)}/${result.id.substring(2,4)}/${result.id}.png?type=jpg`,
           directLink: `https://ooooooooo.ooo/?${result.id}`,
         }));
-      //const combinedResults = [...searchResultsYandexGames, ...searchResultsCrazyGames, ...searchResultsFlashpoint];
+      const combinedResults = [...searchResultsYandexGames, ...searchResultsCrazyGames, ...searchResultsFlashpoint];
       //const combinedResults = { yandexGames: searchResultsYandexGames, crazyGames: searchResultsCrazyGames, flashpoint: searchResultsFlashpoint };
-      res.json(searchResultsCrazyGames);
+      res.json(combinedResults);
     } catch (error) {
       console.error('Error fetching search results:', error);
       res.status(500).json({ error: 'Internal Server Error' });
