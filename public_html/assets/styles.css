@@ -120,3 +120,7 @@ div a:hover {
 .search-result a:hover {
     background-color: #297fb8;
 }
+#search-results {
+    overflow: auto;
+    display: none;
+}

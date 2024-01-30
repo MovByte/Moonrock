@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const displaySearchResults = (results) => {
         const searchResultsSection = document.getElementById('search-results');
+        searchResultsSection.style.display = 'block';
         searchResultsSection.innerHTML = '';
 
         if (results.length > 0) {
@@ -33,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 searchResultsSection.appendChild(gameElement);
             });
         } else {
-            searchResultsSection.innerHTML = '<p>No results found.</p>';
+            searchResultsSection.innerHTML = '<p>No result found.</p>';
         }
     };
 });
