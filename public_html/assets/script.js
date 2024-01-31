@@ -26,13 +26,25 @@ document.addEventListener('DOMContentLoaded', () => {
             results.forEach(result => {
                 const gameElement = document.createElement('div');
                 gameElement.classList.add('search-result');
-                gameElement.innerHTML = `
+                if (result.getInfo != null) {
+                    gameElement.innerHTML = `
+                        <h3>${result.title}</h3>
+                        <!--<p>Mobile Friendly: ${result.mobileFriendly}</p>-->
+                        <!--<p>Age Rating: ${result.ageRating}</p>-->
+                        <a onclick="playFlashpoint('${result.id}')" target="_blank">Play Game</a>
+                        <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
+                    `;
+                    searchResultsSection.appendChild(gameElement);
+                    return;
+                } else {
+                    gameElement.innerHTML = `
                     <h3>${result.title}</h3>
                     <!--<p>Mobile Friendly: ${result.mobileFriendly}</p>-->
                     <!--<p>Age Rating: ${result.ageRating}</p>-->
                     <a onclick="playGame('${result.directLink}')" target="_blank">Play Game</a>
                     <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
                 `;
+                }
                 searchResultsSection.appendChild(gameElement);
             });
         } else {
@@ -43,4 +55,14 @@ document.addEventListener('DOMContentLoaded', () => {
 function playGame(url) {
     localStorage.setItem('URL', url);
     window.location.href = 'go.html';
+}
+function playFlashpoint(id) {
+    const get = `flash?id=${id}`;
+    fetch(get)
+        .then(response => response.json())
+        .then(data => {
+            gamePath = data;
+            localStorage.setItem('gamePath', gamePath);
+            window.location.href = 'flash.html';
+        });
 }

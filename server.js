@@ -4,7 +4,14 @@ const path = require('path');
 require('dotenv').config();
 
 app.use(express.static(path.join(__dirname, 'public_html')));
-
+app.use('/flash', async (req, res) => {
+  const id = req.query.id;
+  const get = `https://ooooooooo.ooo/get?id=${id}`;
+  const response = await fetch(get);
+  const data = await response.json();
+  const gamePath = data.launchCommand;
+  res.json(gamePath);
+});
 app.use('/search', async (req, res) => {
   console.log('Query:', req.query)
   if (req.query.q) {
@@ -66,7 +73,8 @@ app.use('/search', async (req, res) => {
           description: result.originalDescription,
           cover: `https://infinity.unstable.life/images/Logos/${result.id.substring(0,2)}/${result.id.substring(2,4)}/${result.id}.png?type=jpg`,
           directLink: `https://ooooooooo.ooo/?${result.id}`,
-          gameFile: `https://download.unstable.life/gib-roms/Games/${result.id}`
+          gameFile: `https://download.unstable.life/gib-roms/Games/${result.id}`,
+          getInfo: `https://ooooooooo.ooo/get?id=${result.id}`,
         }));
       const combinedResults = [...searchResultsYandexGames, ...searchResultsCrazyGames, ...searchResultsFlashpoint];
       //const combinedResults = { yandexGames: searchResultsYandexGames, crazyGames: searchResultsCrazyGames, flashpoint: searchResultsFlashpoint };

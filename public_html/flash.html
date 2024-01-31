@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <title>Moonrock - Vyper Group</title>
     <link rel="stylesheet" href="assets/styles.css" />
+    <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
     <style>
         body {
             margin: 0;
@@ -22,12 +23,13 @@
         <button type="button"><img src="assets/images/vyper.png"></button>
         <div id="navbar"></div>
     </section>
-    <iframe src="loading.html" id="iframeid"></iframe>
+    <div id="ruffle-container" data-ruffle-path="http://uploads.ungrounded.net/231000/231585_Create_a_worm.swf?123"></div>
     <input type="button" value="Fullscreen" onclick="fullscreen()">
     <script>
         window.onload = function() {
-            let URL = localStorage.getItem("URL");
-            document.querySelector("#iframeid").src = URL;
+            let gamePath = localStorage.getItem("gamePath");
+            document.getElementById("ruffle-container").setAttribute("data-ruffle-path", gamePath);
+            ruffle.load();
         }
         function fullscreen() {
             let iframe = document.querySelector("#iframeid");
