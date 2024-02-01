@@ -14,7 +14,8 @@
             display: block;
             border: none;
             height: 100vh;
-            width: 100vh;
+            width: 100%;
+            align-items: center;
         }
     </style>
 </head>
@@ -24,23 +25,19 @@
         <div id="navbar"></div>
     </section>
     <div id="player"></div>
-    <input type="button" value="Fullscreen" onclick="fullscreen()">
     <script>
         let player = window.RufflePlayer.newest().createPlayer();
-        player.load('http://uploads.ungrounded.net/231000/231585_Create_a_worm.swf?123');
-        document.querySelector("#player").appendChild(player);
-        function fullscreen() {
-            let playerElement = document.querySelector("#player");
-            if (playerElement.requestFullscreen) {
-                playerElement.requestFullscreen();
-            } else if (playerElement.mozRequestFullScreen) {
-                playerElement.mozRequestFullScreen();
-            } else if (playerElement.webkitRequestFullscreen) {
-                playerElement.webkitRequestFullscreen();
-            } else if (playerElement.msRequestFullscreen) {
-                playerElement.msRequestFullscreen();
+        let gamePath = localStorage.getItem('gamePath');
+        player.config.base = gamePath.substring(0, gamePath.lastIndexOf('/') + 1);
+        player.config.allowScriptAccess = true;
+        document.querySelector("#player").append(player);
+        player.load(gamePath);
+        player.addEventListener('loadedmetadata', () => {
+            if (player.metadata.width > 1 && player.metadata.height > 1) {
+                player.style.width  = player.metadata.width  + 'px';
+                player.style.height = player.metadata.height + 'px';
             }
-        }
+        });
     </script>
 </body>
 </html>
