@@ -56,13 +56,16 @@ function playGame(url) {
     localStorage.setItem('URL', url);
     window.location.href = 'go.html';
 }
-function playFlashpoint(id) {
+async function playFlashpoint(id) {
     const get = `flash?id=${id}`;
-    fetch(get)
-        .then(response => response.json())
-        .then(data => {
-            gamePath = data;
-            localStorage.setItem('gamePath', gamePath);
-            window.location.href = 'flash.html';
+    f = fetch(get)
+        .then(async response => {
+            if (response.status == 404) {
+                alert('Game not found. Please report this to the developer.');
+            } else {
+                gamePath = await response.json();
+                localStorage.setItem('gamePath', gamePath);
+                window.location.href = 'flash.html';
+            }
         });
-}
+};

@@ -10,7 +10,7 @@
             margin: 0;
             padding: 0;
         }
-        iframe {
+        #player {
             display: block;
             border: none;
             height: 100vh;
@@ -23,24 +23,22 @@
         <button type="button"><img src="assets/images/vyper.png"></button>
         <div id="navbar"></div>
     </section>
-    <div id="ruffle-container" data-ruffle-path="http://uploads.ungrounded.net/231000/231585_Create_a_worm.swf?123"></div>
+    <div id="player"></div>
     <input type="button" value="Fullscreen" onclick="fullscreen()">
     <script>
-        window.onload = function() {
-            let gamePath = localStorage.getItem("gamePath");
-            document.getElementById("ruffle-container").setAttribute("data-ruffle-path", gamePath);
-            ruffle.load();
-        }
+        let player = window.RufflePlayer.newest().createPlayer();
+        player.load('http://uploads.ungrounded.net/231000/231585_Create_a_worm.swf?123');
+        document.querySelector("#player").appendChild(player);
         function fullscreen() {
-            let iframe = document.querySelector("#iframeid");
-            if (iframe.requestFullscreen) {
-                iframe.requestFullscreen();
-            } else if (iframe.mozRequestFullScreen) {
-                iframe.mozRequestFullScreen();
-            } else if (iframe.webkitRequestFullscreen) {
-                iframe.webkitRequestFullscreen();
-            } else if (iframe.msRequestFullscreen) {
-                iframe.msRequestFullscreen();
+            let playerElement = document.querySelector("#player");
+            if (playerElement.requestFullscreen) {
+                playerElement.requestFullscreen();
+            } else if (playerElement.mozRequestFullScreen) {
+                playerElement.mozRequestFullScreen();
+            } else if (playerElement.webkitRequestFullscreen) {
+                playerElement.webkitRequestFullscreen();
+            } else if (playerElement.msRequestFullscreen) {
+                playerElement.msRequestFullscreen();
             }
         }
     </script>

@@ -8,9 +8,13 @@ app.use('/flash', async (req, res) => {
   const id = req.query.id;
   const get = `https://ooooooooo.ooo/get?id=${id}`;
   const response = await fetch(get);
-  const data = await response.json();
-  const gamePath = data.launchCommand;
-  res.json(gamePath);
+  console.log(`Retrieved ${id} with response ${response.status}`);
+  if (response.status == 500) {
+    res.status(404).json({ error: 'UUID is invalid' });
+  } else {
+    const json = await response.json();
+    res.json(json.launchCommand);
+  }
 });
 app.use('/search', async (req, res) => {
   console.log('Query:', req.query)
