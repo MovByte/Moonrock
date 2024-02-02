@@ -16,6 +16,20 @@ app.use('/flash', async (req, res) => {
     res.json(json.launchCommand);
   }
 });
+app.use('/yandex', async (req, res) => {
+  const id = req.query.appID;
+  const get = `https://yandex.com/games/app/${id}`;
+  const response = await fetch(get);
+  console.log(`Retrieved ${id} with response ${response.status}`);
+  if (response.status == 404) {
+    res.status(404).json({ error: 'Game not found' });
+  } else {
+    const html = await response.text();
+    console.log(html);
+    const src = html.match(/id="game-frame" src="(.+?)"/)[1];
+    res.json(src);
+  }
+});
 app.use('/search', async (req, res) => {
   console.log('Query:', req.query)
   if (req.query.q) {
@@ -32,6 +46,7 @@ app.use('/search', async (req, res) => {
         throw new Error('Unexpected response format from Yandex Games API');
       }
       const searchResultsYandexGames = await yandexGamesResponseJson.feed[0].items.map(item => ({
+          id: item.appID,
           title: item.title,
           directLink: `https://yandex.com/games/app/${item.appID}`,
           cover: `${item.media.cover['prefix-url']}pjpg256x256`,

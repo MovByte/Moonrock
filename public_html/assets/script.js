@@ -36,6 +36,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                     searchResultsSection.appendChild(gameElement);
                     return;
+                } else if (result.apeRating != null) {
+                    gameElement.innerHTML = `
+                    <h3>${result.title}</h3>
+                    <!--<p>Mobile Friendly: ${result.mobileFriendly}</p>-->
+                    <!--<p>Age Rating: ${result.ageRating}</p>-->
+                    <a onclick="playYandex('${result.id}')" target="_blank">Play Game</a>
+                    <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
+                `;
                 } else {
                     gameElement.innerHTML = `
                     <h3>${result.title}</h3>
@@ -69,3 +77,16 @@ async function playFlashpoint(id) {
             }
         });
 };
+async function playYandex(id) {
+    const get = `yandex?appID=${id}`;
+    f = fetch(get)
+        .then(async response => {
+            if (response.status == 404) {
+                alert('Game not found. Please report this to the developer.');
+            } else {
+                gamePath = await response.json();
+                localStorage.setItem('gamePath', gamePath);
+                window.location.href = 'go.html';
+            }
+        });
+}
