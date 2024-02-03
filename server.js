@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const path = require('path');
+const fs = require('fs-extra')
 require('dotenv').config();
 
 app.use(express.static(path.join(__dirname, 'public_html')));
@@ -19,15 +20,28 @@ app.use('/flash', async (req, res) => {
 app.use('/yandex', async (req, res) => {
   const id = req.query.appID;
   const get = `https://yandex.com/games/app/${id}`;
-  const response = await fetch(get);
+  const response = await fetch("https://yandex.com/games/app/193229", {
+    "credentials": "include",
+    "headers": {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "en,en-US;q=0.5",
+        "Prefer": "safe",
+        "Upgrade-Insecure-Requests": "1",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "cross-site"
+    },
+    "method": "GET",
+    "mode": "cors"
+  });
   console.log(`Retrieved ${id} with response ${response.status}`);
   if (response.status == 404) {
     res.status(404).json({ error: 'Game not found' });
   } else {
     const html = await response.text();
-    console.log(html);
-    const src = html.match(/id="game-frame" src="(.+?)"/)[1];
-    res.json(src);
+    await fs.writeFile(`debug/yandex-${id}.html`, html);
+    res.json(link);
   }
 });
 app.use('/search', async (req, res) => {
