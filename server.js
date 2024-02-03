@@ -17,33 +17,33 @@ app.use('/flash', async (req, res) => {
     res.json(json.launchCommand);
   }
 });
-app.use('/yandex', async (req, res) => {
-  const id = req.query.appID;
-  const get = `https://yandex.com/games/app/${id}`;
-  const response = await fetch("https://yandex.com/games/app/193229", {
-    "credentials": "include",
-    "headers": {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-        "Accept-Language": "en,en-US;q=0.5",
-        "Prefer": "safe",
-        "Upgrade-Insecure-Requests": "1",
-        "Sec-Fetch-Dest": "document",
-        "Sec-Fetch-Mode": "navigate",
-        "Sec-Fetch-Site": "cross-site"
-    },
-    "method": "GET",
-    "mode": "cors"
-  });
-  console.log(`Retrieved ${id} with response ${response.status}`);
-  if (response.status == 404) {
-    res.status(404).json({ error: 'Game not found' });
-  } else {
-    const html = await response.text();
-    await fs.writeFile(`debug/yandex-${id}.html`, html);
-    res.json(link);
-  }
-});
+//app.use('/yandex', async (req, res) => {
+//  const id = req.query.appID;
+//  const get = `https://yandex.com/games/app/${id}`;
+//  const response = await fetch("https://yandex.com/games/app/193229", {
+//    "credentials": "include",
+//    "headers": {
+//        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
+//        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+//        "Accept-Language": "en,en-US;q=0.5",
+//        "Prefer": "safe",
+//        "Upgrade-Insecure-Requests": "1",
+//        "Sec-Fetch-Dest": "document",
+//        "Sec-Fetch-Mode": "navigate",
+//        "Sec-Fetch-Site": "cross-site"
+//    },
+//    "method": "GET",
+//    "mode": "cors"
+//  });
+//  console.log(`Retrieved ${id} with response ${response.status}`);
+//  if (response.status == 404) {
+//    res.status(404).json({ error: 'Game not found' });
+//  } else {
+//    const html = await response.text();
+//    // https://app-193229.games.s3.yandex.net/193229/xl4j3o6bypgxe6bekum7rl198bopqwhj/index.html
+//    await fs.writeFile(`debug/yandex-${id}.html`, html);
+//  }
+//});
 app.use('/search', async (req, res) => {
   console.log('Query:', req.query)
   if (req.query.q) {
@@ -109,8 +109,9 @@ app.use('/search', async (req, res) => {
           gameFile: `https://download.unstable.life/gib-roms/Games/${result.id}`,
           getInfo: `https://ooooooooo.ooo/get?id=${result.id}`,
         }));
-      const combinedResults = [...searchResultsYandexGames, ...searchResultsCrazyGames, ...searchResultsFlashpoint];
+      //const combinedResults = [...searchResultsYandexGames, ...searchResultsCrazyGames, ...searchResultsFlashpoint];
       //const combinedResults = { yandexGames: searchResultsYandexGames, crazyGames: searchResultsCrazyGames, flashpoint: searchResultsFlashpoint };
+      const combinedResults = {...searchResultsCrazyGames, ...searchResultsFlashpoint };
       res.json(combinedResults);
     } catch (error) {
       console.error('Error fetching search results:', error);
