@@ -47,6 +47,34 @@ app.use('/flash', async (req, res) => {
 //    res.send(html);
 //  }
 //});
+app.use('/crazygames', async (req, res) => {
+  const id = req.query.slug;
+  const get = `https://games.crazygames.com/en-US/${id}/index.html`;
+  const response = await fetch(get, {
+    "credentials": "include",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+      "Accept-Language": "en,en-US;q=0.5",
+      "Upgrade-Insecure-Requests": "1",
+      "Sec-Fetch-Dest": "document",
+      "Sec-Fetch-Mode": "navigate",
+      "Sec-Fetch-Site": "none",
+      "Sec-Fetch-User": "?1"
+    },
+    "method": "GET",
+    "mode": "cors"
+  });
+  console.log(`Retrieved ${id} with response ${response.status}`);
+  if (response.status == 404) {
+    res.status(404).json({ error: 'Game not found' });
+  } else {
+    const html = await response.text();
+    await fs.ensureDir('debug');
+    fs.writeFile(`debug/crazygames-${id}.html`, html);
+    res.send(html);
+  };
+});
 app.use('/search', async (req, res) => {
   console.log('Query:', req.query)
   if (req.query.q) {
