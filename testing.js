@@ -3,6 +3,7 @@ const passport = require('passport');
 const express = require('express');
 const app = express();
 const axios = require('axios');
+const sqlite3 = require('sqlite3').verbose();
 require('dotenv').config();
 
 var scopes = ['identify', 'email'];
@@ -15,6 +16,9 @@ passport.use(new DiscordStrategy({
 },
 function(accessToken, refreshToken, profile, cb) {
     User.findOrCreate({ discordId: profile.id }, function(err, user) {
+        console.log(profile);
+        console.log(`Access token: ${accessToken}`);
+        console.log(`Refresh token: ${refreshToken}`)
         return cb(err, user);
     });
 }));
