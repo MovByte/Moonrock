@@ -2,9 +2,77 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const fs = require('fs-extra')
+const sqlite3 = require('sqlite3').verbose();
+const passport = require('passport');
+const DiscordStrategy = require('passport-discord').Strategy; 
 require('dotenv').config();
+const session = require('express-session');
+const db = new sqlite3.Database('./data.db');
+
+app.use(session({
+  secret: process.env.SESSION_SECRET, 
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false, // Set to true if you're using HTTPS
+    maxAge:  24 *  60 *  60 *  1000 // Cookie expires after  24 hours
+  }
+}));
+
+passport.use(new DiscordStrategy({
+  clientID: process.env.DISCORD_CLIENT_ID,
+  clientSecret: process.env.DISCORD_CLIENT_SECRET,
+  callbackURL: process.env.DISCORD_CALLBACK_URL, // /auth/discord/callback
+  scope: ['identify', 'email']
+},
+function(accessToken, refreshToken, profile, done) {
+  // Here you would find or create a user in your database
+  // Then call done with the user object
+  done(null, profile);
+}
+));
+app.use(passport.initialize());
+app.use(passport.session());
+db.serialize(() => {
+  db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT)');
+  db.run('CREATE TABLE IF NOT EXISTS sessions (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, sessionStart DATETIME DEFAULT CURRENT_TIMESTAMP)');
+  db.run('CREATE TABLE IF NOT EXISTS game_activity (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, gameSlug TEXT, playTime DATETIME DEFAULT CURRENT_TIMESTAMP)');
+});
+
+app.get('/auth/discord', passport.authenticate('discord'));
+
+app.get('/auth/discord/callback',
+  passport.authenticate('discord', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Successful authentication, get the user's Discord ID
+    const discordId = req.user.id;
+
+    // Check if the user exists in your database by Discord ID
+    db.get('SELECT * FROM users WHERE discord_id = ?', [discordId], (err, row) => {
+      if (err) {
+        return console.error(err.message);
+      }
+
+      if (!row) {
+        // If the user does not exist, insert them into the database
+        db.run('INSERT INTO users (discord_id, username) VALUES (?, ?)', [discordId, req.user.username], function(err) {
+          if (err) {
+            return console.error(err.message);
+          }
+          console.log(`User ${req.user.username} added to the database.`);
+        });
+      } else {
+        // If the user exists, update their last login timestamp or other relevant fields
+        db.run('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE discord_id = ?', [discordId]);
+      }
+    });
+
+    // Redirect the user to the home page or wherever you want them to land
+    res.redirect('/');
+  });
 
 app.use(express.static(path.join(__dirname, 'public_html')));
+
 app.use('/flash', async (req, res) => {
   const id = req.query.id;
   const get = `https://ooooooooo.ooo/get?id=${id}`;
@@ -14,9 +82,12 @@ app.use('/flash', async (req, res) => {
     res.status(404).json({ error: 'UUID is invalid' });
   } else {
     const json = await response.json();
+    //Log to database the json.title and the time
+    
     res.json(json.launchCommand);
   }
 });
+
 //app.use('/yandex', async (req, res) => {
 //  const id = req.query.appID;
 //  const get = `https://yandex.com/games/app/${id}`;
@@ -47,6 +118,7 @@ app.use('/flash', async (req, res) => {
 //    res.send(html);
 //  }
 //});
+
 app.use('/crazygames', async (req, res) => {
   const id = req.query.slug;
   const get = `https://games.crazygames.com/en-US/${id}/index.html`;
@@ -75,6 +147,7 @@ app.use('/crazygames', async (req, res) => {
     res.send(html);
   };
 });
+
 app.use('/search', async (req, res) => {
   console.log('Query:', req.query)
   if (req.query.q) {
