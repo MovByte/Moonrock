@@ -6,10 +6,11 @@ const sqlite3 = require('sqlite3').verbose();
 const passport = require('passport');
 const DiscordStrategy = require('passport-discord').Strategy; 
 require('dotenv').config();
+const axios = require('axios');
 const session = require('express-session');
 const db = new sqlite3.Database('./data.db');
 
-var scopes = ['identify', 'email'];
+var scopes = ['identify'];
 
 app.use(session({
   secret: process.env.SESSION_SECRET, 
@@ -17,7 +18,7 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     secure: false, // Set to true if you're using HTTPS
-    maxAge:  24 *  60 *  60 *  1000 // Cookie expires after  24 hours
+    maxAge:  24 *  60 *  60 *  1000 // Cookie expires after 24 hours
   }
 }));
 
@@ -38,7 +39,7 @@ function(accessToken, refreshToken, profile, cb) {
 app.use(passport.initialize());
 app.use(passport.session());
 db.serialize(() => {
-  db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, userId INTEGER)');
+  db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, name TEXT UNIQUE, userId INTEGER)');
   db.run('CREATE TABLE IF NOT EXISTS game_activity (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, gameName TEXT, playTime DATETIME DEFAULT CURRENT_TIMESTAMP)');
 });
 
@@ -57,24 +58,31 @@ app.get('/auth/discord/callback', async (req, res) => {
       const response = await axios.post('https://discord.com/api/oauth2/token', params);
       const { access_token, token_type } = response.data;
       console.log(response.data);
+      // Store the user ID, username, and global_name to database
       const userDataResponse = await axios.get('https://discord.com/api/users/@me', {
           headers: {
               authorization: `${token_type} ${access_token}`
           }
       });
       const user = userDataResponse.data;
-      console.log(user);
       return res.send(`
           <div style="margin: 300px auto; max-width: 400px; display: flex; flex-direction: column; align-items: center; font-family: sans-serif;">
-              ${user.avatar ? `<img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}"/>` : ''}
-              <h3>Welcome ${user.global_name}</h3>
-              <!--<span>Email: ${user.email}</span>-->
+              <h3>Welcome, ${user.global_name}</h3>
+              <script>
+                localStorage.setItem('userId', '${user.id}');
+                window.location.replace('/');
+              </script>
           </div>
       `);
   } catch (error) {
       console.log('Error', error);
       return res.send('An error occurred while processing your request.');
   }
+});
+
+app.post('/play', async (req, res) => {
+  const gameName = req.query.gameName
+  const userId = req.query.userId
 });
 
 app.use(express.static(path.join(__dirname, 'public_html')));
@@ -88,8 +96,6 @@ app.use('/flash', async (req, res) => {
     res.status(404).json({ error: 'UUID is invalid' });
   } else {
     const json = await response.json();
-    //Log to database the json.title and the time
-    
     res.json(json.launchCommand);
   }
 });

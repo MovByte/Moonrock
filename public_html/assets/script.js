@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h3>${result.title}</h3>
                         <!--<p>Mobile Friendly: ${result.mobileFriendly}</p>-->
                         <!--<p>Age Rating: ${result.ageRating}</p>-->
-                        <a onclick="playFlashpoint('${result.id}')" target="_blank">Play Game</a>
+                        <a onclick="playFlashpoint('${result.id}', '${result.title}')" target="_blank">Play Game</a>
                         <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
                     `;
                     searchResultsSection.appendChild(gameElement);
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3>${result.title}</h3>
                     <!--<p>Mobile Friendly: ${result.mobileFriendly}</p>-->
                     <!--<p>Age Rating: ${result.ageRating}</p>-->
-                    <a onclick="playGame('${result.directLink}')" target="_blank">Play Game</a>
+                    <a onclick="playGame('${result.directLink}', '${result.title}')" target="_blank">Play Game</a>
                     <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
                 `;
                 }
@@ -60,11 +60,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 });
-function playGame(url) {
+function playGame(url, gameName) {
+    if (localStorage.getItem('userId') != null) {
+        fetch(`play?userId=${localStorage.getItem('userId')}&gameName=${gameName}`);
+    };
     localStorage.setItem('URL', url);
     window.location.href = 'go.html';
 }
-async function playFlashpoint(id) {
+async function playFlashpoint(id, gameName) {
+    if (localStorage.getItem('userId') != null) {
+        fetch(`play?userId=${localStorage.getItem('userId')}&gameName=${gameName}`);
+    };
     const get = `flash?id=${id}`;
     f = fetch(get)
         .then(async response => {
