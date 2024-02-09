@@ -35,7 +35,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 db.serialize(() => {
   db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT)');
-  db.run('CREATE TABLE IF NOT EXISTS sessions (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, sessionStart DATETIME DEFAULT CURRENT_TIMESTAMP)');
   db.run('CREATE TABLE IF NOT EXISTS game_activity (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, gameSlug TEXT, playTime DATETIME DEFAULT CURRENT_TIMESTAMP)');
 });
 
