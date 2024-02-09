@@ -17,8 +17,8 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false, // Set to true if you're using HTTPS
-    maxAge:  24 *  60 *  60 *  1000 // Cookie expires after 24 hours
+    secure: process.env.SECURE, // Set to true if you're using HTTPS
+    maxAge:  24 * 60 * 60 * 7 * 1000 // Cookie expires after a week
   }
 }));
 
@@ -65,6 +65,7 @@ app.get('/auth/discord/callback', async (req, res) => {
           }
       });
       const user = userDataResponse.data;
+      console.log(user);
       return res.send(`
           <div style="margin: 300px auto; max-width: 400px; display: flex; flex-direction: column; align-items: center; font-family: sans-serif;">
               <h3>Welcome, ${user.global_name}</h3>
