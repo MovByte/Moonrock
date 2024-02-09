@@ -16,9 +16,6 @@ passport.use(new DiscordStrategy({
 },
 function(accessToken, refreshToken, profile, cb) {
     User.findOrCreate({ discordId: profile.id }, function(err, user) {
-        console.log(profile);
-        console.log(`Access token: ${accessToken}`);
-        console.log(`Refresh token: ${refreshToken}`)
         return cb(err, user);
     });
 }));
@@ -37,7 +34,7 @@ app.get('/auth/discord/callback', async (req, res) => {
     try {
         const response = await axios.post('https://discord.com/api/oauth2/token', params);
         const { access_token, token_type } = response.data;
-
+        console.log(response.data);
         const userDataResponse = await axios.get('https://discord.com/api/users/@me', {
             headers: {
                 authorization: `${token_type} ${access_token}`

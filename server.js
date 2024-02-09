@@ -24,16 +24,17 @@ var scopes = ['identify', 'email'];
 passport.use(new DiscordStrategy({
   clientID: process.env.DISCORD_CLIENT_ID,
   clientSecret: process.env.DISCORD_CLIENT_SECRET,
-  callbackURL: process.env.DISCORD_CALLBACK_URL, // /auth/discord/callback
+  callbackURL: process.env.DISCORD_CALLBACK_URL,
   scope: scopes
 },
-function(accessToken, refreshToken, profile, done) {
-  console.log(profile);
-  console.log(`Access token: ${accessToken}`);
-  console.log(`Refresh token: ${refreshToken}`)
-  done(null, profile);
-}
-));
+function(accessToken, refreshToken, profile, cb) {
+  User.findOrCreate({ discordId: profile.id }, function(err, user) {
+      console.log(profile);
+      console.log(`Access token: ${accessToken}`);
+      console.log(`Refresh token: ${refreshToken}`)
+      return cb(err, user);
+  });
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 db.serialize(() => {
@@ -43,35 +44,38 @@ db.serialize(() => {
 
 app.get('/auth/discord', passport.authenticate('discord'));
 
-app.get('/auth/discord/callback',
-  passport.authenticate('discord', { failureRedirect: '/login' }),
-  function(req, res) {
-    // Successful authentication, get the user's Discord ID
-    const discordId = req.user.id;
+app.get('/auth/discord/callback', async (req, res) => {
+  const code = req.query.code;
+  const params = new URLSearchParams();
+  params.append('client_id', process.env.DISCORD_CLIENT_ID);
+  params.append('client_secret', process.env.DISCORD_CLIENT_SECRET);
+  params.append('grant_type', 'authorization_code');
+  params.append('code', code);
+  params.append('redirect_uri', process.env.DISCORD_CALLBACK_URL);
 
-    // Check if the user exists in your database by Discord ID
-    db.get('SELECT * FROM users WHERE discord_id = ?', [discordId], (err, row) => {
-      if (err) {
-        return console.error(err.message);
-      }
-
-      if (!row) {
-        // If the user does not exist, insert them into the database
-        db.run('INSERT INTO users (discord_id, username) VALUES (?, ?)', [discordId, req.user.username], function(err) {
-          if (err) {
-            return console.error(err.message);
+  try {
+      const response = await axios.post('https://discord.com/api/oauth2/token', params);
+      const { access_token, token_type } = response.data;
+      console.log(response.data);
+      const userDataResponse = await axios.get('https://discord.com/api/users/@me', {
+          headers: {
+              authorization: `${token_type} ${access_token}`
           }
-          console.log(`User ${req.user.username} added to the database.`);
-        });
-      } else {
-        // If the user exists, update their last login timestamp or other relevant fields
-        db.run('UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE discord_id = ?', [discordId]);
-      }
-    });
-
-    // Redirect the user to the home page or wherever you want them to land
-    res.redirect('/');
-  });
+      });
+      const user = userDataResponse.data;
+      console.log(user);
+      return res.send(`
+          <div style="margin: 300px auto; max-width: 400px; display: flex; flex-direction: column; align-items: center; font-family: sans-serif;">
+              ${user.avatar ? `<img src="https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}"/>` : ''}
+              <h3>Welcome ${user.global_name}</h3>
+              <!--<span>Email: ${user.email}</span>-->
+          </div>
+      `);
+  } catch (error) {
+      console.log('Error', error);
+      return res.send('An error occurred while processing your request.');
+  }
+});
 
 app.use(express.static(path.join(__dirname, 'public_html')));
 
