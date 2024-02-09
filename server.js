@@ -9,33 +9,36 @@ require('dotenv').config();
 const session = require('express-session');
 const db = new sqlite3.Database('./data.db');
 
-app.use(session({
-  secret: process.env.SESSION_SECRET, 
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: false, // Set to true if you're using HTTPS
-    maxAge:  24 *  60 *  60 *  1000 // Cookie expires after  24 hours
-  }
-}));
+var scopes = ['identify', 'email'];
+
+//app.use(session({
+//  secret: process.env.SESSION_SECRET, 
+//  resave: false,
+//  saveUninitialized: false,
+//  cookie: {
+//    secure: false, // Set to true if you're using HTTPS
+//    maxAge:  24 *  60 *  60 *  1000 // Cookie expires after  24 hours
+//  }
+//}));
 
 passport.use(new DiscordStrategy({
   clientID: process.env.DISCORD_CLIENT_ID,
   clientSecret: process.env.DISCORD_CLIENT_SECRET,
   callbackURL: process.env.DISCORD_CALLBACK_URL, // /auth/discord/callback
-  scope: ['identify', 'email']
+  scope: scopes
 },
 function(accessToken, refreshToken, profile, done) {
-  // Here you would find or create a user in your database
-  // Then call done with the user object
+  console.log(profile);
+  console.log(`Access token: ${accessToken}`);
+  console.log(`Refresh token: ${refreshToken}`)
   done(null, profile);
 }
 ));
 app.use(passport.initialize());
 app.use(passport.session());
 db.serialize(() => {
-  db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT)');
-  db.run('CREATE TABLE IF NOT EXISTS game_activity (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, gameSlug TEXT, playTime DATETIME DEFAULT CURRENT_TIMESTAMP)');
+  db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, userId INTEGER)');
+  db.run('CREATE TABLE IF NOT EXISTS game_activity (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, gameName TEXT, playTime DATETIME DEFAULT CURRENT_TIMESTAMP)');
 });
 
 app.get('/auth/discord', passport.authenticate('discord'));
