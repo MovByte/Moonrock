@@ -11,15 +11,15 @@ const db = new sqlite3.Database('./data.db');
 
 var scopes = ['identify', 'email'];
 
-//app.use(session({
-//  secret: process.env.SESSION_SECRET, 
-//  resave: false,
-//  saveUninitialized: false,
-//  cookie: {
-//    secure: false, // Set to true if you're using HTTPS
-//    maxAge:  24 *  60 *  60 *  1000 // Cookie expires after  24 hours
-//  }
-//}));
+app.use(session({
+  secret: process.env.SESSION_SECRET, 
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false, // Set to true if you're using HTTPS
+    maxAge:  24 *  60 *  60 *  1000 // Cookie expires after  24 hours
+  }
+}));
 
 passport.use(new DiscordStrategy({
   clientID: process.env.DISCORD_CLIENT_ID,
