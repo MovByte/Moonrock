@@ -20,17 +20,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (localStorage.getItem('view') === 'list') {
             searchResultsSection.style.display = 'block';
         }
+        var resultsArray = Object.values(results);
         searchResultsSection.innerHTML = '';
-
-        if (results.length > 0) {
-            results.forEach(result => {
+        if (resultsArray.length > 0) {
+            resultsArray.forEach(result => {
                 const gameElement = document.createElement('div');
                 gameElement.classList.add('search-result');
                 if (result.getInfo != null) {
                     gameElement.innerHTML = `
                         <h3>${result.title}</h3>
-                        <!--<p>Mobile Friendly: ${result.mobileFriendly}</p>-->
-                        <!--<p>Age Rating: ${result.ageRating}</p>-->
                         <a onclick="playFlashpoint('${result.id}', '${result.title}')" target="_blank">Play Game</a>
                         <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
                     `;
@@ -47,8 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     gameElement.innerHTML = `
                     <h3>${result.title}</h3>
-                    <!--<p>Mobile Friendly: ${result.mobileFriendly}</p>-->
-                    <!--<p>Age Rating: ${result.ageRating}</p>-->
                     <a onclick="playGame('${result.directLink}', '${result.title}')" target="_blank">Play Game</a>
                     <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
                 `;

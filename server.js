@@ -84,6 +84,7 @@ app.get('/auth/discord/callback', async (req, res) => {
 app.post('/play', async (req, res) => {
   const gameName = req.query.gameName
   const userId = req.query.userId
+  // Store the game activity to the database
 });
 
 app.use(express.static(path.join(__dirname, 'public_html')));
