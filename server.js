@@ -78,7 +78,7 @@ app.get('/auth/discord/callback', async (req, res) => {
   } catch (error) {
       console.log('Error', error);
       return res.send('An error occurred while processing your request.');
-  }
+}
 });
 
 app.post('/play', async (req, res) => {
@@ -92,8 +92,6 @@ app.post('/play', async (req, res) => {
     console.log(`A row has been inserted to game_activity with rowId ${this.lastID}`);
   });
 });
-
-app.use(express.static(path.join(__dirname, 'public_html')));
 
 app.use('/flash', async (req, res) => {
   const id = req.query.id;
@@ -167,6 +165,8 @@ app.use('/crazygames', async (req, res) => {
     res.send(html);
   };
 });
+
+app.use(express.static(path.join(__dirname, 'public_html')));
 
 app.use('/search', async (req, res) => {
   console.log('Query:', req.query)
