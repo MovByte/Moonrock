@@ -10,6 +10,7 @@ A search engine and aggregator for game sites.
 6. Fill SESSION_SECRET with something to secure the cookie.
 7. Fill SECURE with true if you use HTTPS and false if you use HTTP.
 ## Credits
-Dave, made most of the stuff [GitHub](https://github.com/dave9123/) [Discord](https://discord.com/users/781708312466554940)
+Dave, made some of the code [GitHub](https://github.com/dave9123) [Discord](https://discord.com/users/781708312466554940)
 <br />
 Whimsy, made the frontend [GitHub](https://github.com/InAWhimsicalManner) [Discord](https://discord.com/users/1127936626883035227)
+endlessvortex, original idea [GitHub](https://github.com/MovByte) [Discord](https://discord.com/users/980548613614764093)
