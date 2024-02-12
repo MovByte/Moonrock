@@ -8,6 +8,7 @@ const DiscordStrategy = require('passport-discord').Strategy;
 require('dotenv').config();
 const axios = require('axios');
 const session = require('express-session');
+const cookieParser = require('cookie-parser');
 const db = new sqlite3.Database('./data.db');
 
 var scopes = ['identify'];
@@ -21,6 +22,8 @@ app.use(session({
     maxAge:  24 * 60 * 60 * 7 * 1000 // Cookie expires after a week
   }
 }));
+
+app.use(cookieParser())
 
 passport.use(new DiscordStrategy({
   clientID: process.env.DISCORD_CLIENT_ID,
