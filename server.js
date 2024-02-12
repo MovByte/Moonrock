@@ -18,7 +18,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.SECURE, // Set to true if you're using HTTPS
+    secure: process.env.SECURE, // Set to true if using HTTPS
     maxAge:  24 * 60 * 60 * 7 * 1000 // Cookie expires after a week
   }
 }));
