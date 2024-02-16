@@ -171,13 +171,18 @@ app.use('/crazygames', async (req, res) => {
 
 app.use(express.static(path.join(__dirname, 'public_html')));
 
-app.use('/search', async (req, res) => {
+app.use('/api/search', async (req, res) => {
   console.log('Query:', req.query)
   if (req.query.q) {
     try {
       const searchTerm = req.query.q;
-      const limit = req.query.limit || process.env.QUERY_LIMIT || 10;
-      const yandexGamesApiUrl = `https://yandex.com/games/api/catalogue/v3/search/?query=${searchTerm}&games_count=${limit}`;
+      const limit = req.query.limit || process.env.QUERY_LIMIT || null;
+      var crazyGamesApiUrl = `https://api.crazygames.com/v3/en_US/search?q=${searchTerm}&limit=${limit}&includeTopGames=true`;
+      var yandexGamesApiUrl = `https://yandex.com/games/api/catalogue/v3/search/?query=${searchTerm}&games_count=${limit}`;
+      if (limit === null) {
+        yandexGamesApiUrl = `https://yandex.com/games/api/catalogue/v3/search/?query=${searchTerm}`;
+        crazyGamesApiUrl = `https://api.crazygames.com/v3/en_US/search?q=${searchTerm}&includeTopGames=true`;
+      }
       const yandexGamesApiResponse = await fetch(yandexGamesApiUrl);
       if (!yandexGamesApiResponse.ok) {
         throw new Error(`Failed to fetch data from Yandex Games API (${yandexGamesApiResponse.status} ${yandexGamesApiResponse.statusText})`);
@@ -192,8 +197,7 @@ app.use('/search', async (req, res) => {
           directLink: `https://yandex.com/games/app/${item.appID}`,
           cover: `${item.media.cover['prefix-url']}pjpg256x256`,
           ageRating: item.features.age_rating,
-        }));
-      const crazyGamesApiUrl = `https://api.crazygames.com/v3/en_US/search?q=${searchTerm}&limit=${limit}&includeTopGames=true`;
+        }));      
       const crazyGamesApiResponse = await fetch(crazyGamesApiUrl, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0',
