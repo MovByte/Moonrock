@@ -198,9 +198,10 @@ app.use('/api/search', async (req, res) => {
         } else {
           await fs.ensureDir('cache');
           await fs.writeFile('cache/armorgames.json', JSON.stringify(armorGamesResponseJson));
-          JSON.parse(armorGamesResponseJson)
         };
       };
+      const armorGamesResponseJson = await armorGamesApiUrlResponse.json();
+      const searchResultsArmorGames = armorGamesResponseJson.filter(game => game.label && game.label.toLowerCase().includes(searchTerm.toLowerCase()));
       const yandexGamesApiResponse = await fetch(yandexGamesApiUrl);
       if (!yandexGamesApiResponse.ok) {
         throw new Error(`Failed to fetch data from Yandex Games API (${yandexGamesApiResponse.status} ${yandexGamesApiResponse.statusText})`);
@@ -260,7 +261,7 @@ app.use('/api/search', async (req, res) => {
         }));
       //const combinedResults = [...searchResultsYandexGames, ...searchResultsCrazyGames, ...searchResultsFlashpoint];
       //const combinedResults = { yandexGames: searchResultsYandexGames, crazyGames: searchResultsCrazyGames, flashpoint: searchResultsFlashpoint };
-      const combinedResults = {...searchResultsCrazyGames, ...searchResultsFlashpoint };
+      const combinedResults = {...searchResultsArmorGames, ...searchResultsCrazyGames, ...searchResultsFlashpoint };
       res.json(combinedResults);
     } catch (error) {
       console.error('Error fetching search results:', error);
