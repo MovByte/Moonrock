@@ -179,12 +179,12 @@ app.use('/api/search', async (req, res) => {
       const limit = req.query.limit || process.env.QUERY_LIMIT || null;
       var crazyGamesApiUrl = `https://api.crazygames.com/v3/en_US/search?q=${searchTerm}&limit=${limit}&includeTopGames=true`;
       var yandexGamesApiUrl = `https://yandex.com/games/api/catalogue/v3/search/?query=${searchTerm}&games_count=${limit}`;
-      const armorGamesApiUrl = `https://armorgames.com/service/games-search`;
+      const armorGamesApiUrl = `https://armorgames.com/service/game-search`;
       if (limit === null) {
         yandexGamesApiUrl = `https://yandex.com/games/api/catalogue/v3/search/?query=${searchTerm}`;
         crazyGamesApiUrl = `https://api.crazygames.com/v3/en_US/search?q=${searchTerm}&includeTopGames=true`;
       }
-      const armorGamesApiUrlResponse = fetch(armorGamesApiUrl, {
+      const armorGamesApiUrlResponse = await fetch(armorGamesApiUrl, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0',
         },
