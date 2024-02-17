@@ -13,15 +13,6 @@ const db = new sqlite3.Database('./data.db');
 
 var scopes = ['identify'];
 
-async function fetchArmorGames() {
-  const url = 'https://www.armorgames.com/service/game-search';
-  const response = await fetch(url);
-  const json = await response.json();
-  await fs.ensureDir('cache');
-  fs.writeFile('cache/armorgames.json', JSON.stringify(json));
-  return json;
-}
-
 app.use(session({
   secret: process.env.SESSION_SECRET, 
   resave: false,
