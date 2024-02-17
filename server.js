@@ -183,6 +183,24 @@ app.use('/api/search', async (req, res) => {
         yandexGamesApiUrl = `https://yandex.com/games/api/catalogue/v3/search/?query=${searchTerm}`;
         crazyGamesApiUrl = `https://api.crazygames.com/v3/en_US/search?q=${searchTerm}&includeTopGames=true`;
       }
+      const armorGamesApiUrlResponse = fetch(armorGamesApiUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0',
+        },
+      });
+      if (!armorGamesApiUrlResponse.ok) {
+        throw new Error(`Failed to fetch data from Armor Games API (${armorGamesApiUrlResponse.status} ${armorGamesApiUrlResponse.statusText})`);
+      };
+      if (armorGamesApiUrlResponse.ok) {
+        const armorGamesResponseJson = await armorGamesApiUrlResponse.json();
+        if (!armorGamesResponseJson || !Array.isArray(armorGamesResponseJson)) {
+          throw new Error('Unexpected response format from Armor Games API');
+        } else {
+          await fs.ensureDir('cache');
+          await fs.writeFile('cache/armorgames.json', JSON.stringify(armorGamesResponseJson));
+          JSON.parse(armorGamesResponseJson)
+        };
+      };
       const yandexGamesApiResponse = await fetch(yandexGamesApiUrl);
       if (!yandexGamesApiResponse.ok) {
         throw new Error(`Failed to fetch data from Yandex Games API (${yandexGamesApiResponse.status} ${yandexGamesApiResponse.statusText})`);
