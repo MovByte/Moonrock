@@ -16,8 +16,8 @@
   "scripts": {
     "start": "node server.js",
     "yarn:start": "yarn server.js",
-    "dev": "nodemon server.js",
-    "nodemon:dev": "nodemon server.js",
+    "dev": "nodemon -i cache server.js",
+    "nodemon:dev": "nodemon -i cache server.js",
     "yarn:install": "yarn install",
     "yarn:import": "yarn import"
   },

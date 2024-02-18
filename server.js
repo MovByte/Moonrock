@@ -181,28 +181,49 @@ app.use('/api/search', async (req, res) => {
       var yandexGamesApiUrl = `https://yandex.com/games/api/catalogue/v3/search/?query=${searchTerm}&games_count=${limit}`;
       const armorGamesApiUrl = `https://armorgames.com/service/game-search`;
       if (limit === null) {
+        console.log('No limit specified')
         yandexGamesApiUrl = `https://yandex.com/games/api/catalogue/v3/search/?query=${searchTerm}`;
         crazyGamesApiUrl = `https://api.crazygames.com/v3/en_US/search?q=${searchTerm}&includeTopGames=true`;
       }
-      const armorGamesApiUrlResponse = await fetch(armorGamesApiUrl, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0',
+      const armorGamesApiResponse = await fetch(armorGamesApiUrl, {
+        "credentials": "omit",
+        "headers": {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            "Accept-Language": "en,en-US;q=0.5",
+            "Prefer": "safe",
+            "Sec-GPC": "1",
+            "Alt-Used": "armorgames.com",
+            "Upgrade-Insecure-Requests": "1",
+            "Sec-Fetch-Dest": "document",
+            "Sec-Fetch-Mode": "navigate",
+            "Sec-Fetch-Site": "cross-site"
         },
+        "method": "GET",
+        "mode": "cors"
       });
-      if (!armorGamesApiUrlResponse.ok) {
-        throw new Error(`Failed to fetch data from Armor Games API (${armorGamesApiUrlResponse.status} ${armorGamesApiUrlResponse.statusText})`);
+      if (!armorGamesApiResponse.ok) {
+        throw new Error(`Failed to fetch data from Armor Games API (${armorGamesApiResponse.status} ${armorGamesApiResponse.statusText})`);
       };
-      if (armorGamesApiUrlResponse.ok) {
-        const armorGamesResponseJson = await armorGamesApiUrlResponse.json();
-        if (!armorGamesResponseJson || !Array.isArray(armorGamesResponseJson)) {
-          throw new Error('Unexpected response format from Armor Games API');
+      if (armorGamesApiResponse.ok) {
+        const armorGamesApiResponseJson = await armorGamesApiResponse.json();
+        if (!armorGamesApiResponseJson || !Array.isArray(armorGamesApiResponseJson)) {
+          throw new Error(`Unexpected response format from Armor Games API ${armorGamesApiResponse.status} ${armorGamesApiResponse.statusText}`);
         } else {
           await fs.ensureDir('cache');
-          await fs.writeFile('cache/armorgames.json', JSON.stringify(armorGamesResponseJson));
+          await fs.writeFile('cache/armorgames.json', JSON.stringify(armorGamesApiResponseJson));
         };
       };
-      const armorGamesResponseJson = await armorGamesApiUrlResponse.json();
-      const searchResultsArmorGames = armorGamesResponseJson.filter(game => game.label && game.label.toLowerCase().includes(searchTerm.toLowerCase()));
+      const armorGamesApiResponseJson = require('./cache/armorgames.json');
+      const armorGamesResults = armorGamesApiResponseJson.filter(game => game.label && game.label.toLowerCase().includes(searchTerm.toLowerCase()));
+      const searchResultsArmorGames = await armorGamesResults.map(game => ({
+        id: game.game_id,
+        title: game.label,
+        cover: game.thumbnail,
+        gameUrl: `https://armorgames.com${game.url}`,
+        directLink: `https://armorgames.com${game.url}`
+        //directLink: `https://${game.game_id}.cache.armorgames.com/files/games/${game.url.replace(/\/play\/\${game.id}\//, '')}-${game.game_id}/index.html`
+      }));
       const yandexGamesApiResponse = await fetch(yandexGamesApiUrl);
       if (!yandexGamesApiResponse.ok) {
         throw new Error(`Failed to fetch data from Yandex Games API (${yandexGamesApiResponse.status} ${yandexGamesApiResponse.statusText})`);
