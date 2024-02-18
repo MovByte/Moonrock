@@ -222,8 +222,8 @@ app.use('/api/search', async (req, res) => {
         cover: game.thumbnail,
         gameUrl: `https://armorgames.com${game.url}`,
         directLink: `https://armorgames.com${game.url}`
-        //TODO: Get direct link (either Flash or HTML)
-        //directLink: `https://${game.game_id}.cache.armorgames.com/files/games/${game.url.replace(/\/play\/\${game.id}\//, '')}-${game.game_id}/index.html`
+        //TODO: Get direct link (either Flash or HTML), but it doesn't seem to be possible without scraping the page as it's not available on the API
+        //testingDirectLink: `https://${game.game_id}.cache.armorgames.com/files/games/${game.url.replace(/play\/${game.id}\//, '')}-${game.game_id}/index.html`
       }));
       const yandexGamesApiResponse = await fetch(yandexGamesApiUrl);
       if (!yandexGamesApiResponse.ok) {
