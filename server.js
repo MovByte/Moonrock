@@ -222,6 +222,7 @@ app.use('/api/search', async (req, res) => {
         cover: game.thumbnail,
         gameUrl: `https://armorgames.com${game.url}`,
         directLink: `https://armorgames.com${game.url}`
+        //TODO: Get direct link (either Flash or HTML
         //directLink: `https://${game.game_id}.cache.armorgames.com/files/games/${game.url.replace(/\/play\/\${game.id}\//, '')}-${game.game_id}/index.html`
       }));
       const yandexGamesApiResponse = await fetch(yandexGamesApiUrl);
