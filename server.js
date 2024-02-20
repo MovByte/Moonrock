@@ -140,6 +140,41 @@ app.use('/flash', async (req, res) => {
 //  }
 //});
 
+app.use('/armorgames', async (req, res) => {
+  const url = `https://armorgames.com${req.query.url}`;
+  //TODO: Make sure to sanitize user's input before directly using it in the URL
+  // HTML link: https://armorgames.com/clicker-heroes-game/16083
+  // Flash link: https://armorgames.com/play/186/pursuit
+  var id = null;
+  var name = null;
+  var gameType = null;
+  if (req.query.url.split('/')[1] === 'play') {
+      console.log("Flash game on Armor Games detected");
+      id = req.query.url.split('/')[2];
+      name = req.query.url.split('/')[3];
+      gameType = 'Flash';
+      console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type Flash`);
+    } else {
+      console.log("HTML game on Armor Games detected");
+      id = req.query.url.split('/')[2];
+      name = req.query.url.split('/')[1];
+      gameType = 'HTML';
+      console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type HTML`);
+    }
+    console.log(`Retrieving ${url}`);
+    const response = await fetch(url);
+    console.log(`Retrieved with response ${response.status}`);
+  if (response.status == 404) {
+    res.status(404).json({ error: 'Game not found' });
+  } else {
+    const html = await response.text();
+    await fs.ensureDir('debug');
+    fs.writeFile(`debug/armorgames-${id}.html`, html);
+    console.log(`Saved ${id} to debug/armorgames-${id}.html`);
+  }
+  res.send('Hello world!');
+});
+
 app.use('/crazygames', async (req, res) => {
   const id = req.query.slug;
   const get = `https://games.crazygames.com/en-US/${id}/index.html`;
