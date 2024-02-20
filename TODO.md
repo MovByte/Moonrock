@@ -1,0 +1,13 @@
+# TODO List
+- Scrape direct game link from Yandex Games
+- Scrape direct game link from Armor Games
+- Be able to bypass/not have captcha page shown for Yandex
+- Support itch.io
+- Support kongregate.com
+- Support now.gg (games)
+- Support newgrounds.com (games)
+- Get actual direct link from crazygames.com
+- Add gameplay history, most played game, leaderboard, playtime, etc and store user login info
+- Store stuff on cookie to let the user logged in
+- Bookmark function
+- Download game function
