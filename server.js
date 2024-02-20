@@ -141,6 +141,11 @@ app.use('/flash', async (req, res) => {
 //});
 
 app.use('/armorgames', async (req, res) => {
+  if (req.query.url === undefined) {
+    res.status(400);
+    res.json({ error: 'URL is required' });
+    console.log("No url detected on Armor Games function")
+  };
   const url = `https://armorgames.com${req.query.url}`;
   // TODO: Make sure to sanitize user's input before directly using it in the URL
   // HTML link: https://armorgames.com/clicker-heroes-game/16083
@@ -148,7 +153,8 @@ app.use('/armorgames', async (req, res) => {
   var id = null;
   var name = null;
   var gameType = null;
-  if (req.query.url.split('/')[1] === 'play') {
+  if (req.query.url !== undefined) {
+    if (req.query.url.split('/')[1] === 'play') {
       // TODO: Find direct link
       //Example direct link: https://cache.armorgames.com/files/games/pursuit-186.swf?v=1373587520
       console.log("Flash game on Armor Games detected");
@@ -164,19 +170,20 @@ app.use('/armorgames', async (req, res) => {
       name = req.query.url.split('/')[1];
       gameType = 'HTML';
       console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type HTML`);
-    }
+    };
     console.log(`Retrieving ${url}`);
     const response = await fetch(url);
     console.log(`Retrieved with response ${response.status}`);
-  if (response.status == 404) {
-    res.status(404).json({ error: 'Game not found' });
-  } else {
-    const html = await response.text();
-    await fs.ensureDir('debug');
-    fs.writeFile(`debug/armorgames-${id}.html`, html);
-    console.log(`Saved ${id} to debug/armorgames-${id}.html`);
-  }
-  res.send('Hello world!');
+    if (response.status == 404) {
+      res.status(404).json({ error: 'Game not found' });
+    } else {
+      const html = await response.text();
+      await fs.ensureDir('debug');
+      fs.writeFile(`debug/armorgames-${id}.html`, html);
+      console.log(`Saved ${id} to debug/armorgames-${id}.html`);
+    };
+    res.send(`Currently on development.`);
+  };
 });
 
 app.use('/crazygames', async (req, res) => {
