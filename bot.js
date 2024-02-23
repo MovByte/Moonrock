@@ -46,4 +46,17 @@ client.once('error', (error) => {
     throw new Error(`An error occured ${error}`);
 });
 
+client.on('interactionCreate', async (interaction) => {
+    try {
+        if (!interaction.isCommand() && !interaction.isModalSubmit()) return;
+
+        if (interaction.isCommand()) {
+            const command = require(`./commands/${interaction.commandName}`);
+            await command.execute(interaction);
+        }
+    } catch (error) {
+        throw new Error(`An error occured while trying to execute command ${error}`);
+    };
+});
+
 client.login(token);
