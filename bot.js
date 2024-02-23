@@ -35,11 +35,11 @@ client.once('ready', async () => {
     console.log(`Logged in as ${client.user.tag}`);
     const guildId = process.env.GUILD_ID;
     const guild = await client.guilds.fetch(guildId);
-    console.log(`Clearing commands on guild ${guild}`)
+    console.log(`Clearing commands on guild ${guild}...`)
     await guild.commands.set([]);
-    console.log(`Finished clearing commands on guild ${guild}\nRegistering commands on guild ${await client.guilds.fetch(guild)}`);
+    console.log(`Finished clearing commands on guild ${guild}!\nRegistering commands on guild ${await client.guilds.fetch(guild)}...`);
     await registerCommands(guild);
-    console.log(`Finished registering commands on guild ${guild}`);
+    console.log(`Finished registering commands on guild ${guild}!`);
 });
 
 client.once('error', (error) => {
