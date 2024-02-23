@@ -7,7 +7,9 @@
 - Support now.gg (games)
 - Support newgrounds.com (games)
 - Get actual direct link from crazygames.com
-- Add gameplay history, most played game, leaderboard, playtime, etc and store user login info
+- Add gameplay history, most played game, leaderboard, playtime, etc and store user info
+- Able to comply with COPPA for user data
+- Add Terms of Use and Privacy Policy
 - Store stuff on cookie to let the user logged in
 - Bookmark function
 - Download game function
