@@ -141,35 +141,59 @@ app.use('/flash', async (req, res) => {
 //});
 
 app.use('/armorgames', async (req, res) => {
-  if (req.query.url === undefined) {
-    res.status(400);
-    res.json({ error: 'URL is required' });
-    console.log("No url detected on Armor Games function")
-  };
-  const url = `https://armorgames.com${req.query.url}`;
-  // TODO: Make sure to sanitize user's input before directly using it in the URL
-  // HTML link: https://armorgames.com/clicker-heroes-game/16083
-  // Flash link: https://armorgames.com/play/186/pursuit
   var id = null;
   var name = null;
   var gameType = null;
-  if (req.query.url !== undefined) {
-    if (req.query.url.split('/')[1] === 'play') {
-      // TODO: Find direct link
-      //Example direct link: https://cache.armorgames.com/files/games/pursuit-186.swf?v=1373587520
-      console.log("Flash game on Armor Games detected");
-      id = req.query.url.split('/')[2];
-      name = req.query.url.split('/')[3];
-      gameType = 'Flash';
-      console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type Flash`);
-    } else {
-      // TODO: Find direct link
-      //Example direct link: https://18896.cache.armorgames.com/files/games/1v1lol-18896/index.html?v=1635715644
-      console.log("HTML game on Armor Games detected");
-      id = req.query.url.split('/')[2];
-      name = req.query.url.split('/')[1];
-      gameType = 'HTML';
-      console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type HTML`);
+  if (req.query.game_id !== undefined) {
+    fs.readFile('cache/armorgames.json', 'utf8', (err, data) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+      } else {
+        const json = JSON.parse(data);
+        const gameResult = json.filter(game => Number(game.game_id) === Number(req.query.game_id));
+        console.log(gameResult);
+        if (gameResult.length === 0) {
+          res.status(404).json({ error: 'Game not found' });
+        } else {
+          const searchResultsArmorGames = gameResult.map(game => ({
+            id: game.game_id,
+            title: game.label,
+            cover: game.thumbnail,
+            gameUrl: `https://armorgames.com${game.url}`,
+            directLink: ``
+          }));
+          res.json(searchResultsArmorGames);
+        }
+      }
+    });
+  } else if (req.query.url === undefined) {
+    res.status(400);
+    res.json({ error: 'URL is required' });
+    console.log("No url detected on Armor Games function")
+  } else {
+    const url = `https://armorgames.com${req.query.url}`;
+    // TODO: Make sure to sanitize user's input before directly using it in the URL
+    // HTML link: https://armorgames.com/clicker-heroes-game/16083
+    // Flash link: https://armorgames.com/play/186/pursuit
+    if (req.query.url !== undefined) {
+      if (req.query.url.split('/')[1] === 'play') {
+        // TODO: Find direct link
+        //Example direct link: https://cache.armorgames.com/files/games/pursuit-186.swf?v=1373587520
+        console.log("Flash game on Armor Games detected");
+        id = req.query.url.split('/')[2];
+        name = req.query.url.split('/')[3];
+        gameType = 'Flash';
+        console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type Flash`);
+    }  else {
+        // TODO: Find direct link
+        //Example direct link: https://18896.cache.armorgames.com/files/games/1v1lol-18896/index.html?v=1635715644
+        console.log("HTML game on Armor Games detected");
+        id = req.query.url.split('/')[2];
+        name = req.query.url.split('/')[1];
+        gameType = 'HTML';
+        console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type HTML`);
+      };
     };
     console.log(`Retrieving ${url}`);
     const response = await fetch(url);

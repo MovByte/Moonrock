@@ -13,3 +13,4 @@
 - Store stuff on cookie to let the user logged in
 - Bookmark function
 - Download game function
+- Make a Discord bot to show the user their playtime, history, leaderboard
