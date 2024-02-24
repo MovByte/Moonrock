@@ -144,7 +144,11 @@ app.use('/armorgames', async (req, res) => {
   var id = null;
   var name = null;
   var gameType = null;
-  if (req.query.game_id !== undefined) {
+  if (req.query.game_id === undefined || req.query.url === undefined) {
+    res.status(400);
+    res.json({ error: 'Game ID or URL is required' });
+    console.log("No game_id or url detected on Armor Games function")
+  } else if (req.query.game_id !== undefined) {
     fs.readFile('cache/armorgames.json', 'utf8', (err, data) => {
       if (err) {
         console.error(err);
@@ -167,11 +171,7 @@ app.use('/armorgames', async (req, res) => {
         }
       }
     });
-  } else if (req.query.url === undefined) {
-    res.status(400);
-    res.json({ error: 'URL is required' });
-    console.log("No url detected on Armor Games function")
-  } else {
+  } else if (req.query.url !== undefined) {
     const url = `https://armorgames.com${req.query.url}`;
     // TODO: Make sure to sanitize user's input before directly using it in the URL
     // HTML link: https://armorgames.com/clicker-heroes-game/16083
@@ -185,7 +185,7 @@ app.use('/armorgames', async (req, res) => {
         name = req.query.url.split('/')[3];
         gameType = 'Flash';
         console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type Flash`);
-    }  else {
+      } else {
         // TODO: Find direct link
         //Example direct link: https://18896.cache.armorgames.com/files/games/1v1lol-18896/index.html?v=1635715644
         console.log("HTML game on Armor Games detected");
