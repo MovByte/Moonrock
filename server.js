@@ -181,7 +181,7 @@ app.use('/armorgames', async (req, res) => {
         if (gameResult.length === 0) {
           res.status(404).json({ error: 'Game not found' });
         } else if (gameResult.length > 1) {
-          res.status(500).json({ error: 'Multiple games found with the same ID' });
+          res.status(500).json({ error: 'Internal Server Error' });
         } else {
           fetch(`https://armorgames.com${gameResult.url}`).then(response => response.text()).then(text => {
             fs.writeFile(`debug/armorgames-${gameResult.game_id}.html`, text);
