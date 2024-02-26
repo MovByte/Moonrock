@@ -23,6 +23,27 @@ app.use(session({
   }
 }));
 
+function fetchGame(url, name) {
+  if (name === "Armor Games") {
+    fetch(url).then(response => response.text()).then(text => {
+      fs.writeFile(`debug/armorgames-${id}.html`, text);
+      console.log(`Saved ${id} to debug/armorgames-${id}.html`);
+      return text;
+    });
+  };
+  //if (name === "Crazy Games") {
+  //  fetch(url).then(response => response.text()).then(text => {
+  //    fs.writeFile(`debug/crazygames-${id}.html`, text);
+  //    console.log(`Saved ${id} to debug/crazygames-${id}.html`);
+  //  });
+  //};
+  //if (name === "Yandex Games") {
+  //  fetch(url).then(response => response.text()).then(text => {
+  //    fs.writeFile(`debug/yandexgames-${id}.html`, text);
+  //    console.log(`Saved ${id} to debug/yandexgames-${id}.html`);
+  //  });
+  //};
+};
 app.use(cookieParser())
 
 passport.use(new DiscordStrategy({
@@ -159,7 +180,30 @@ app.use('/armorgames', async (req, res) => {
         console.log(gameResult);
         if (gameResult.length === 0) {
           res.status(404).json({ error: 'Game not found' });
+        } else if (gameResult.length > 1) {
+          res.status(500).json({ error: 'Multiple games found with the same ID' });
         } else {
+          fetch(`https://armorgames.com${gameResult.url}`).then(response => response.text()).then(text => {
+            fs.writeFile(`debug/armorgames-${gameResult.game_id}.html`, text);
+            console.log(`Saved ${gameResult.game_id} to debug/armorgames-${gameResult.game_id}.html`);
+          });
+          if (gameResult.url.split('/')[1] === 'play') {
+            console.log("Flash game on Armor Games detected");
+            id = gameResult.game_id;
+            name = gameResult.url.split('/')[2];
+            gameType = 'Flash';
+            console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type Flash`);
+            const $ = cheerio.load(htmlContent);
+            const movieParamValue = $('param[name="movie"]').attr('value');
+          } else {
+            console.log("HTML game on Armor Games detected");
+            id = gameResult.game_id;
+            name = gameResult.url.split('/')[1];
+            gameType = 'HTML';
+            console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type HTML`);
+            const $ = cheerio.load(htmlContent);
+            const iframeSrc = $('#html-game-frame').attr('src');
+          };
           const searchResultsArmorGames = gameResult.map(game => ({
             id: game.game_id,
             title: game.label,
