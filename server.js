@@ -9,6 +9,7 @@ require('dotenv').config();
 const axios = require('axios');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const cheerio = require('cheerio');
 const db = new sqlite3.Database('./data.db');
 
 var scopes = ['identify'];
@@ -23,11 +24,11 @@ app.use(session({
   }
 }));
 
-function fetchGame(url, name) {
+async function fetchGame(url, name) {
   if (name === "Armor Games") {
-    fetch(url).then(response => response.text()).then(text => {
+    await fetch(url).then(response => response.text()).then(text => {
       fs.writeFile(`debug/armorgames-${id}.html`, text);
-      console.log(`Saved ${id} to debug/armorgames-${id}.html`);
+      console.log(`Saved ${id} to debug/armorgames-${id}.html`);      
       return text;
     });
   };
@@ -105,7 +106,8 @@ app.get('/auth/discord/callback', async (req, res) => {
 }
 });
 
-app.post('/play', async (req, res) => {
+// TODO: Add rate limiting and prevent unauthorized access
+app.use('/play', async (req, res) => {
   const gameName = req.query.gameName
   const userId = req.query.userId
   console.log(`User ${userId} is playing ${gameName}`)
@@ -165,7 +167,10 @@ app.use('/armorgames', async (req, res) => {
   var id = null;
   var name = null;
   var gameType = null;
-  if (req.query.game_id === undefined || req.query.url === undefined) {
+  var game = null;
+  var html = null;
+  console.log(req.query)
+  if (!req.query.game_id && !req.query.url) {
     res.status(400);
     res.json({ error: 'Game ID or URL is required' });
     console.log("No game_id or url detected on Armor Games function")
@@ -176,13 +181,14 @@ app.use('/armorgames', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
       } else {
         const json = JSON.parse(data);
-        const gameResult = json.filter(game => Number(game.game_id) === Number(req.query.game_id));
+        var gameResult = json.filter(game => Number(game.game_id) === Number(req.query.game_id));
         console.log(gameResult);
         if (gameResult.length === 0) {
           res.status(404).json({ error: 'Game not found' });
         } else if (gameResult.length > 1) {
           res.status(500).json({ error: 'Internal Server Error' });
         } else {
+          gameResult = gameResult[0];
           fetch(`https://armorgames.com${gameResult.url}`).then(response => response.text()).then(text => {
             fs.writeFile(`debug/armorgames-${gameResult.game_id}.html`, text);
             console.log(`Saved ${gameResult.game_id} to debug/armorgames-${gameResult.game_id}.html`);
@@ -193,24 +199,27 @@ app.use('/armorgames', async (req, res) => {
             name = gameResult.url.split('/')[2];
             gameType = 'Flash';
             console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type Flash`);
-            const $ = cheerio.load(htmlContent);
-            const movieParamValue = $('param[name="movie"]').attr('value');
+            html = fetchGame(`https://armorgames.com${gameResult.url}`, 'Armor Games');
+            const $ = cheerio.load(html);
+            game = $('param[name="movie"]').attr('value');
           } else {
             console.log("HTML game on Armor Games detected");
             id = gameResult.game_id;
             name = gameResult.url.split('/')[1];
             gameType = 'HTML';
             console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type HTML`);
-            const $ = cheerio.load(htmlContent);
-            const iframeSrc = $('#html-game-frame').attr('src');
+            html = fetchGame(`https://armorgames.com${gameResult.url}`, 'Armor Games');
+            const $ = cheerio.load(html);
+            game = $('#html-game-frame').attr('src');
           };
-          const searchResultsArmorGames = gameResult.map(game => ({
-            id: game.game_id,
+          const searchResultsArmorGames = {
+            id: game.id,
             title: game.label,
             cover: game.thumbnail,
             gameUrl: `https://armorgames.com${game.url}`,
-            directLink: ``
-          }));
+            gameType: gameType,
+            directLink: game
+          };
           res.json(searchResultsArmorGames);
         }
       }
