@@ -1,6 +1,7 @@
 # TODO List
+- Automatically download game list from Armor Games
+- Search function for Armor Games
 - Scrape direct game link from Yandex Games
-- Scrape direct game link from Armor Games
 - Be able to bypass/not have captcha page shown for Yandex
 - Support itch.io
 - Support kongregate.com
@@ -12,5 +13,5 @@
 - Add Terms of Use and Privacy Policy
 - Store stuff on cookie to let the user logged in
 - Bookmark function
-- Download game function
+- Download game function (offline)
 - Make a Discord bot to show the user their playtime, history, leaderboard
