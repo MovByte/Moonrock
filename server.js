@@ -121,12 +121,10 @@ async function updateCache() {
       "Content-Type": "application/json;charset=utf-8",
       "Origin": "https://armorgames.com",
       "Connection": "keep-alive",
-      "Referer": "https://armorgames.com/",
-      "TE": "Trailers"
+      "Referer": "https://armorgames.com/"
     },
     "referrer": "https://armorgames.com/",
-    "body": "{\"query\":\"\"}",
-    "method": "POST",
+    "method": "GET",
     "mode": "cors"
   }).then(response => response.json()).then(async json => {
     await fs.ensureDir('cache').then(async () => {
@@ -419,4 +417,5 @@ app.use('/api/search', async (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running http://localhost:${PORT}`);
+  updateCache();
 });
