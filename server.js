@@ -111,6 +111,33 @@ app.get('/auth/discord/callback', async (req, res) => {
 }
 });
 
+async function updateCache() {
+  fetch('https://armorgames.com/service/game-search', {
+    "credentials": "omit",
+    "headers": {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
+      "Accept": "application/json, text/plain, */*",
+      "Accept-Language": "en,en-US;q=0.5",
+      "Content-Type": "application/json;charset=utf-8",
+      "Origin": "https://armorgames.com",
+      "Connection": "keep-alive",
+      "Referer": "https://armorgames.com/",
+      "TE": "Trailers"
+    },
+    "referrer": "https://armorgames.com/",
+    "body": "{\"query\":\"\"}",
+    "method": "POST",
+    "mode": "cors"
+  }).then(response => response.json()).then(async json => {
+    await fs.ensureDir('cache').then(async () => {
+      await fs.writeFile('cache/armorgames.json', JSON.stringify(json)).then(() => {
+        console.log('Wrote to cache/armorgames.json');
+      });
+    });
+    res.json(json);
+  });
+};
+
 // TODO: Add rate limiting and prevent unauthorized access
 app.use('/play', async (req, res) => {
   const gameName = req.query.gameName
@@ -222,7 +249,7 @@ app.use('/armorgames', async (req, res) => {
           searchResults = {
             id: id,
             title: gameResult.label,
-            cover: cover,
+            cover: cover, // https://gamemedia.armorgames.com/16083/icn_feat.png https://gamemedia.armorgames.com/16083/icn_thmb.png
             gameUrl: `https://armorgames.com${url}`,
             gameType: gameType,
             directLink: game
