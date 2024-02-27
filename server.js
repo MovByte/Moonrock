@@ -30,11 +30,12 @@ async function fetchGame(url, provider, id) {
       console.log(`Reading from debug/armorgames-${id}.html`);
       return await fs.readFile(`debug/armorgames-${id}.html`, 'utf8');
     } else {
-      await fetch(url).then(response => response.text()).then(async text => {
-        await fs.writeFile(`debug/armorgames-${id}.html`, text);
-        console.log(`Saved ${id} to debug/armorgames-${id}.html`);
-        return await fs.readFile(`debug/armorgames-${id}.html`, 'utf8');
-      });
+      const response = await fetch(url)
+      const text = await response.text();
+      await fs.writeFile(`debug/armorgames-${id}.html`, text);
+      console.log(`Saved ${id} to debug/armorgames-${id}.html`);
+      return await text;
+      //return await fs.readFile(`debug/armorgames-${id}.html`, 'utf8');
     }
   };
   //if (name === "Crazy Games") {
@@ -232,7 +233,7 @@ app.use('/armorgames', async (req, res) => {
             gameType = 'Flash';
             console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type Flash`);
             html = await fetchGame(`https://armorgames.com${gameResult.url}`, 'Armor Games', id);
-            console.log(html)
+            //console.log(html)
             const $ = cheerio.load(html);
             game = $('param[name="movie"]').attr('value');
           } else {
