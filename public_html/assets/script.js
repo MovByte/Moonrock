@@ -79,6 +79,24 @@ async function playFlashpoint(id, gameName) {
             }
         });
 };
+async function playArmor(id) {
+    if (localStorage.getItem('userId') != null) {
+        fetch(`play?userId=${localStorage.getItem('userId')}&gameName=${gameName}`);
+    };
+    const get = `armorgames?game_id=${id}`;
+    f = fetch(get)
+        .then(async response => {
+            if (response.status == 404) {
+                alert('Game not found. Please report this to the developer.');
+            } else {
+                gamePath = await response.json();
+                // Either flash.html or go.html
+                //localStorage.setItem('gamePath', gamePath);
+                //window.location.href = 'armor.html';
+            }
+        });
+
+}
 //async function playYandex(id) {
 //    const get = `yandex?appID=${id}`;
 //    f = fetch(get)

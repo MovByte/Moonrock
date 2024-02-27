@@ -30,10 +30,10 @@ async function fetchGame(url, provider, id) {
       console.log(`Reading from debug/armorgames-${id}.html`);
       return await fs.readFile(`debug/armorgames-${id}.html`, 'utf8');
     } else {
-      await fetch(url).then(response => response.text()).then(text => {
-        fs.writeFile(`debug/armorgames-${id}.html`, text);
-        console.log(`Saved ${id} to debug/armorgames-${id}.html`);      
-        return text;
+      await fetch(url).then(response => response.text()).then(async text => {
+        await fs.writeFile(`debug/armorgames-${id}.html`, text);
+        console.log(`Saved ${id} to debug/armorgames-${id}.html`);
+        return await fs.readFile(`debug/armorgames-${id}.html`, 'utf8');
       });
     }
   };
@@ -232,6 +232,7 @@ app.use('/armorgames', async (req, res) => {
             gameType = 'Flash';
             console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type Flash`);
             html = await fetchGame(`https://armorgames.com${gameResult.url}`, 'Armor Games', id);
+            console.log(html)
             const $ = cheerio.load(html);
             game = $('param[name="movie"]').attr('value');
           } else {
@@ -333,17 +334,16 @@ app.use('/api/search', async (req, res) => {
 //          await fs.writeFile('cache/armorgames.json', JSON.stringify(armorGamesApiResponseJson));
 //        };
 //      };
-//      const armorGamesApiResponseJson = require('./cache/armorgames.json');
-//      const armorGamesResults = armorGamesApiResponseJson.filter(game => game.label && game.label.toLowerCase().includes(searchTerm.toLowerCase()));
-//      const searchResultsArmorGames = await armorGamesResults.map(game => ({
-//        id: game.game_id,
-//        title: game.label,
-//        cover: game.thumbnail,
-//        gameUrl: `https://armorgames.com${game.url}`,
+      const armorGamesApiJson = require('./cache/armorgames.json');
+      const armorGamesResults = armorGamesApiResponseJson.filter(game => game.label && game.label.toLowerCase().includes(searchTerm.toLowerCase()));
+      const searchResultsArmorGames = await armorGamesResults.map(game => ({
+        id: game.game_id,
+        title: game.label,
+        cover: game.thumbnail,
+        gameUrl: `https://armorgames.com${game.url}`,
+        provider: 'armorGames'
 //        directLink: `https://armorgames.com${game.url}`
-//        //TODO: Get direct link (either Flash or HTML), but it doesn't seem to be possible without scraping the page as it's not available on the API
-//        //testingDirectLink: `https://${game.game_id}.cache.armorgames.com/files/games/${game.url.replace(/play\/${game.id}\//, '')}-${game.game_id}/index.html`
-//      }));
+      }));
 //      const yandexGamesApiResponse = await fetch(yandexGamesApiUrl);
 //      if (!yandexGamesApiResponse.ok) {
 //        throw new Error(`Failed to fetch data from Yandex Games API (${yandexGamesApiResponse.status} ${yandexGamesApiResponse.statusText})`);
