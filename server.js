@@ -178,10 +178,10 @@ app.use('/armorgames', async (req, res) => {
   var searchResults = null;
   var url = null;
   console.log(req.query)
-  if (req.query.game_id === null || req.query.url === null) {
+  if (req.query.game_id === null) {
     res.status(400);
-    res.json({ error: 'Game ID or URL is required' });
-    console.log("No game_id or url detected on Armor Games function")
+    res.json({ error: 'Game ID required' });
+    console.log("No game_id detected on Armor Games function")
   } else if (req.query.game_id !== null) {
     fs.readFile('cache/armorgames.json', 'utf8', async (err, data) => {
       if (err) {
@@ -231,45 +231,6 @@ app.use('/armorgames', async (req, res) => {
         }
       }
     });
-  } else if (req.query.url !== undefined) {
-    const url = `https://armorgames.com${req.query.url}`;
-    // TODO: Make sure to sanitize user's input before directly using it in the URL
-    if (req.query.url !== undefined) {
-      if (req.query.url.split('/')[1] === 'play') {
-        // TODO: Find direct link
-        //Example direct link: https://cache.armorgames.com/files/games/pursuit-186.swf?v=1373587520
-        console.log("Flash game on Armor Games detected");
-        id = req.query.url.split('/')[2];
-        name = req.query.url.split('/')[3];
-        gameType = 'Flash';
-        console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type Flash`);
-        html = await fetchGame(url, 'Armor Games', id);
-        console.log(html);
-        const $ = cheerio.load(html);
-        game = $('#html-game-frame').attr('src');
-      } else {
-        // TODO: Find direct link
-        //Example direct link: https://cache.armorgames.com/files/games/clicker-heroes-16083/index.html?v=1698712108
-        console.log("HTML game on Armor Games detected");
-        id = req.query.url.split('/')[2];
-        name = req.query.url.split('/')[1];
-        gameType = 'HTML';
-        console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type HTML`);
-        html = await fetchGame(url, 'Armor Games', id);
-        console.log(html);
-        const $ = cheerio.load(html);
-        game = $('#html-game-frame').attr('src');
-      };
-      searchResults = {
-        id: id,
-        title: name,
-        cover: cover,
-        gameUrl: `https://armorgames.com${url}`,
-        gameType: gameType,
-        directLink: game
-      };
-      res.json(searchResults);
-    };
   };
 });
 
