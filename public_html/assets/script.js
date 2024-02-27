@@ -42,6 +42,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 //    <a onclick="playYandex('${result.id}')" target="_blank">Play Game</a>
                 //    <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
                 //`;
+                } else if (result.provider === "armorGames") {
+                    gameElement.innerHTML = `
+                    <h3>${result.title}</h3>
+                    <a onclick="playArmor('${result.id}')" target="_blank">Play Game</a>
+                    <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
+                `;
                 } else {
                     gameElement.innerHTML = `
                     <h3>${result.title}</h3>
@@ -80,19 +86,23 @@ async function playFlashpoint(id, gameName) {
         });
 };
 async function playArmor(id) {
-    if (localStorage.getItem('userId') != null) {
-        fetch(`play?userId=${localStorage.getItem('userId')}&gameName=${gameName}`);
-    };
+    //if (localStorage.getItem('userId') != null) {
+    //    fetch(`play?userId=${localStorage.getItem('userId')}&gameName=${gameName}`);
+    //};
     const get = `armorgames?game_id=${id}`;
-    f = fetch(get)
+    f = await fetch(get)
         .then(async response => {
-            if (response.status == 404) {
+            if (response.status === 404) {
                 alert('Game not found. Please report this to the developer.');
-            } else {
-                gamePath = await response.json();
-                // Either flash.html or go.html
-                //localStorage.setItem('gamePath', gamePath);
-                //window.location.href = 'armor.html';
+            } else if (response.status === 200) {
+                response = await response.json();
+                if (response.gameType === "Flash") {
+                    localStorage.setItem('gamePath', response.directLink);
+                    window.location.href = 'flash.html';
+                } else if (response.gameType === "HTML") {
+                    localStorage.setItem('URL', response.directLink);
+                    window.location.href = 'go.html';
+                }
             }
         });
 

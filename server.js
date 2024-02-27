@@ -336,7 +336,7 @@ app.use('/api/search', async (req, res) => {
 //        };
 //      };
       const armorGamesApiJson = require('./cache/armorgames.json');
-      const armorGamesResults = armorGamesApiResponseJson.filter(game => game.label && game.label.toLowerCase().includes(searchTerm.toLowerCase()));
+      const armorGamesResults = armorGamesApiJson.filter(game => game.label && game.label.toLowerCase().includes(searchTerm.toLowerCase()));
       const searchResultsArmorGames = await armorGamesResults.map(game => ({
         id: game.game_id,
         title: game.label,
@@ -360,26 +360,26 @@ app.use('/api/search', async (req, res) => {
 //          cover: `${item.media.cover['prefix-url']}pjpg256x256`,
 //          ageRating: item.features.age_rating,
 //        }));      
-//      const crazyGamesApiResponse = await fetch(crazyGamesApiUrl, {
-//        headers: {
-//          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0',
-//        },
-//      });
-//      if (!crazyGamesApiResponse.ok) {
-//        throw new Error(`Failed to fetch data from CrazyGames API (${crazyGamesApiResponse.status} ${crazyGamesApiResponse.statusText})`);
-//      }
-//      const crazyGamesResponseJson = await crazyGamesApiResponse.json();
-//      if (!crazyGamesResponseJson || !crazyGamesResponseJson.result || !Array.isArray(crazyGamesResponseJson.result)) {
-//        throw new Error('Unexpected response format from CrazyGames API');
-//      }
-//      const searchResultsCrazyGames = crazyGamesResponseJson.result
-//        .filter(result => result.recordType !== 'tag')
-//        .map(result => ({
-//          title: result.name,
-//          directLink: `https://games.crazygames.com/en-US/${result.slug}/index.html`,
-//          cover: `https://images.crazygames.com/${result.cover}`,
-//          mobileFriendly: result.mobileFriendly,
-//        }));
+      const crazyGamesApiResponse = await fetch(crazyGamesApiUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0',
+        },
+      });
+      if (!crazyGamesApiResponse.ok) {
+        throw new Error(`Failed to fetch data from CrazyGames API (${crazyGamesApiResponse.status} ${crazyGamesApiResponse.statusText})`);
+      }
+      const crazyGamesResponseJson = await crazyGamesApiResponse.json();
+      if (!crazyGamesResponseJson || !crazyGamesResponseJson.result || !Array.isArray(crazyGamesResponseJson.result)) {
+        throw new Error('Unexpected response format from CrazyGames API');
+      }
+      const searchResultsCrazyGames = crazyGamesResponseJson.result
+        .filter(result => result.recordType !== 'tag')
+        .map(result => ({
+          title: result.name,
+          directLink: `https://games.crazygames.com/en-US/${result.slug}/index.html`,
+          cover: `https://images.crazygames.com/${result.cover}`,
+          mobileFriendly: result.mobileFriendly,
+        }));
       const flashpointApiUrl = `https://db-api.unstable.life/search?smartSearch=${searchTerm}&filter=true&fields=id,title,developer,publisher,platform,tags,originalDescription`;
       const flashpointApiResponse = await fetch(flashpointApiUrl);
       if (!flashpointApiResponse.ok) {
@@ -404,7 +404,7 @@ app.use('/api/search', async (req, res) => {
         }));
       //const combinedResults = [...searchResultsArmorGames, ...searchResultsYandexGames, ...searchResultsCrazyGames, ...searchResultsFlashpoint];
       //const combinedResults = { armorGames: searchResultsArmorGames, yandexGames: searchResultsYandexGames, crazyGames: searchResultsCrazyGames, flashpoint: searchResultsFlashpoint };
-      const combinedResults = {...searchResultsCrazyGames, ...searchResultsFlashpoint };
+      const combinedResults = {...searchResultsArmorGames, ...searchResultsCrazyGames, ...searchResultsFlashpoint };
       res.json(combinedResults);
     } catch (error) {
       console.error('Error fetching search results:', error);
