@@ -27,7 +27,8 @@ app.use(session({
 async function fetchGame(url, provider, id) {
   if (provider === "Armor Games") {
     if (fs.existsSync(`debug/armorgames-${id}.html`)) {
-      return await fs.readFileSync(`debug/armorgames-${id}.html`)
+      console.log(`Reading from debug/armorgames-${id}.html`);
+      return await fs.readFile(`debug/armorgames-${id}.html`, 'utf8');
     } else {
       await fetch(url).then(response => response.text()).then(text => {
         fs.writeFile(`debug/armorgames-${id}.html`, text);
@@ -175,17 +176,19 @@ app.use('/armorgames', async (req, res) => {
   var html = null;
   var cover = null;
   var searchResults = null;
+  var url = null;
   console.log(req.query)
   if (req.query.game_id === null || req.query.url === null) {
     res.status(400);
     res.json({ error: 'Game ID or URL is required' });
     console.log("No game_id or url detected on Armor Games function")
   } else if (req.query.game_id !== null) {
-    fs.readFile('cache/armorgames.json', 'utf8', (err, data) => {
+    fs.readFile('cache/armorgames.json', 'utf8', async (err, data) => {
       if (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal Server Error' });
       } else {
+        var game = null;
         const json = JSON.parse(data);
         var gameResult = json.filter(game => Number(game.game_id) === Number(req.query.game_id));
         console.log(gameResult);
@@ -195,6 +198,7 @@ app.use('/armorgames', async (req, res) => {
           res.status(500).json({ error: 'Internal Server Error' });
         } else {
           gameResult = gameResult[0];
+          url = gameResult.url;
           cover = gameResult.thumbnail;
           if (gameResult.url.split('/')[1] === 'play') {
             console.log("Flash game on Armor Games detected");
@@ -202,8 +206,7 @@ app.use('/armorgames', async (req, res) => {
             name = gameResult.url.split('/')[2];
             gameType = 'Flash';
             console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type Flash`);
-            html = fetchGame(`https://armorgames.com${gameResult.url}`, 'Armor Games', id);
-            console.log(html);
+            html = await fetchGame(`https://armorgames.com${gameResult.url}`, 'Armor Games', id);
             const $ = cheerio.load(html);
             game = $('param[name="movie"]').attr('value');
           } else {
@@ -212,11 +215,19 @@ app.use('/armorgames', async (req, res) => {
             name = gameResult.url.split('/')[1];
             gameType = 'HTML';
             console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type HTML`);
-            html = fetchGame(`https://armorgames.com${gameResult.url}`, 'Armor Games', id);
-            console.log(html);
+            html = await fetchGame(`https://armorgames.com${gameResult.url}`, 'Armor Games', id);
             const $ = cheerio.load(html);
             game = $('#html-game-frame').attr('src');
           };
+          searchResults = {
+            id: id,
+            title: gameResult.label,
+            cover: cover,
+            gameUrl: `https://armorgames.com${url}`,
+            gameType: gameType,
+            directLink: game
+          };
+          res.json(searchResults);
         }
       }
     });
@@ -232,7 +243,7 @@ app.use('/armorgames', async (req, res) => {
         name = req.query.url.split('/')[3];
         gameType = 'Flash';
         console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type Flash`);
-        html = fetchGame(url, 'Armor Games', id);
+        html = await fetchGame(url, 'Armor Games', id);
         console.log(html);
         const $ = cheerio.load(html);
         game = $('#html-game-frame').attr('src');
@@ -244,21 +255,21 @@ app.use('/armorgames', async (req, res) => {
         name = req.query.url.split('/')[1];
         gameType = 'HTML';
         console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type HTML`);
-        html = fetchGame(url, 'Armor Games', id);
+        html = await fetchGame(url, 'Armor Games', id);
         console.log(html);
         const $ = cheerio.load(html);
         game = $('#html-game-frame').attr('src');
       };
+      searchResults = {
+        id: id,
+        title: name,
+        cover: cover,
+        gameUrl: `https://armorgames.com${url}`,
+        gameType: gameType,
+        directLink: game
+      };
+      res.json(searchResults);
     };
-    searchResults = {
-      id: id,
-      title: name,
-      cover: cover,
-      gameUrl: `https://armorgames.com${game.url}`,
-      gameType: gameType,
-      directLink: game
-    };
-    res.json(searchResults);
   };
 });
 
