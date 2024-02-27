@@ -24,13 +24,17 @@ app.use(session({
   }
 }));
 
-async function fetchGame(url, name) {
-  if (name === "Armor Games") {
-    await fetch(url).then(response => response.text()).then(text => {
-      fs.writeFile(`debug/armorgames-${id}.html`, text);
-      console.log(`Saved ${id} to debug/armorgames-${id}.html`);      
-      return text;
-    });
+async function fetchGame(url, provider, id) {
+  if (provider === "Armor Games") {
+    if (fs.existsSync(`debug/armorgames-${id}.html`)) {
+      return await fs.readFileSync(`debug/armorgames-${id}.html`)
+    } else {
+      await fetch(url).then(response => response.text()).then(text => {
+        fs.writeFile(`debug/armorgames-${id}.html`, text);
+        console.log(`Saved ${id} to debug/armorgames-${id}.html`);      
+        return text;
+      });
+    }
   };
   //if (name === "Crazy Games") {
   //  fetch(url).then(response => response.text()).then(text => {
@@ -169,12 +173,14 @@ app.use('/armorgames', async (req, res) => {
   var gameType = null;
   var game = null;
   var html = null;
+  var cover = null;
+  var searchResults = null;
   console.log(req.query)
-  if (!req.query.game_id && !req.query.url) {
+  if (req.query.game_id === null || req.query.url === null) {
     res.status(400);
     res.json({ error: 'Game ID or URL is required' });
     console.log("No game_id or url detected on Armor Games function")
-  } else if (req.query.game_id !== undefined) {
+  } else if (req.query.game_id !== null) {
     fs.readFile('cache/armorgames.json', 'utf8', (err, data) => {
       if (err) {
         console.error(err);
@@ -189,17 +195,15 @@ app.use('/armorgames', async (req, res) => {
           res.status(500).json({ error: 'Internal Server Error' });
         } else {
           gameResult = gameResult[0];
-          fetch(`https://armorgames.com${gameResult.url}`).then(response => response.text()).then(text => {
-            fs.writeFile(`debug/armorgames-${gameResult.game_id}.html`, text);
-            console.log(`Saved ${gameResult.game_id} to debug/armorgames-${gameResult.game_id}.html`);
-          });
+          cover = gameResult.thumbnail;
           if (gameResult.url.split('/')[1] === 'play') {
             console.log("Flash game on Armor Games detected");
             id = gameResult.game_id;
             name = gameResult.url.split('/')[2];
             gameType = 'Flash';
             console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type Flash`);
-            html = fetchGame(`https://armorgames.com${gameResult.url}`, 'Armor Games');
+            html = fetchGame(`https://armorgames.com${gameResult.url}`, 'Armor Games', id);
+            console.log(html);
             const $ = cheerio.load(html);
             game = $('param[name="movie"]').attr('value');
           } else {
@@ -208,27 +212,17 @@ app.use('/armorgames', async (req, res) => {
             name = gameResult.url.split('/')[1];
             gameType = 'HTML';
             console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type HTML`);
-            html = fetchGame(`https://armorgames.com${gameResult.url}`, 'Armor Games');
+            html = fetchGame(`https://armorgames.com${gameResult.url}`, 'Armor Games', id);
+            console.log(html);
             const $ = cheerio.load(html);
             game = $('#html-game-frame').attr('src');
           };
-          const searchResultsArmorGames = {
-            id: game.id,
-            title: game.label,
-            cover: game.thumbnail,
-            gameUrl: `https://armorgames.com${game.url}`,
-            gameType: gameType,
-            directLink: game
-          };
-          res.json(searchResultsArmorGames);
         }
       }
     });
   } else if (req.query.url !== undefined) {
     const url = `https://armorgames.com${req.query.url}`;
     // TODO: Make sure to sanitize user's input before directly using it in the URL
-    // HTML link: https://armorgames.com/clicker-heroes-game/16083
-    // Flash link: https://armorgames.com/play/186/pursuit
     if (req.query.url !== undefined) {
       if (req.query.url.split('/')[1] === 'play') {
         // TODO: Find direct link
@@ -238,28 +232,33 @@ app.use('/armorgames', async (req, res) => {
         name = req.query.url.split('/')[3];
         gameType = 'Flash';
         console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type Flash`);
+        html = fetchGame(url, 'Armor Games', id);
+        console.log(html);
+        const $ = cheerio.load(html);
+        game = $('#html-game-frame').attr('src');
       } else {
         // TODO: Find direct link
-        //Example direct link: https://18896.cache.armorgames.com/files/games/1v1lol-18896/index.html?v=1635715644
+        //Example direct link: https://cache.armorgames.com/files/games/clicker-heroes-16083/index.html?v=1698712108
         console.log("HTML game on Armor Games detected");
         id = req.query.url.split('/')[2];
         name = req.query.url.split('/')[1];
         gameType = 'HTML';
         console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type HTML`);
+        html = fetchGame(url, 'Armor Games', id);
+        console.log(html);
+        const $ = cheerio.load(html);
+        game = $('#html-game-frame').attr('src');
       };
     };
-    console.log(`Retrieving ${url}`);
-    const response = await fetch(url);
-    console.log(`Retrieved with response ${response.status}`);
-    if (response.status == 404) {
-      res.status(404).json({ error: 'Game not found' });
-    } else {
-      const html = await response.text();
-      await fs.ensureDir('debug');
-      fs.writeFile(`debug/armorgames-${id}.html`, html);
-      console.log(`Saved ${id} to debug/armorgames-${id}.html`);
+    searchResults = {
+      id: id,
+      title: name,
+      cover: cover,
+      gameUrl: `https://armorgames.com${game.url}`,
+      gameType: gameType,
+      directLink: game
     };
-    res.send(`Currently on development.`);
+    res.json(searchResults);
   };
 });
 
