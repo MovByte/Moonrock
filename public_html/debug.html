@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Debug</title>
+    </head>
+    <body>
+        <input type="text" id="URL" placeholder="HTML game URL (to go.html)">
+        <button onclick="go()">Go</button>
+        <br />
+        <input type="text" id="gamePath" placeholder="Flash game path (to flash.html)">
+        <button onclick="flash()">Go</button>
+        <script>
+            function go() {
+                localStorage.setItem('URL', document.getElementById("URL").value);
+                window.location.href = 'go.html';
+            };
+            function flash() {
+                localStorage.setItem('gamePath', document.getElementById("gamePath").value);
+                window.location.href = 'flash.html';
+            };            
+        </script>
+    </body>
+</html>
