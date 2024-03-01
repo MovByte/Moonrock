@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (result.getInfo != null) {
                     gameElement.innerHTML = `
                         <h3>${result.title}</h3>
+                        <p>Provider: Flashpoint</p>
                         <a onclick="playFlashpoint('${result.id}', '${result.title}')" target="_blank">Play Game</a>
                         <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
                     `;
@@ -45,12 +46,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (result.provider === "armorGames") {
                     gameElement.innerHTML = `
                     <h3>${result.title}</h3>
+                    <p>Provider: Armor Games</p>
                     <a onclick="playArmor('${result.id}')" target="_blank">Play Game</a>
                     <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
                 `;
                 } else {
                     gameElement.innerHTML = `
                     <h3>${result.title}</h3>
+                    <p>Provider: Crazy Games</p>
                     <a onclick="playGame('${result.directLink}', '${result.title}')" target="_blank">Play Game</a>
                     <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
                 `;
