@@ -1,6 +1,5 @@
 # TODO List
 - Automatically download game list from Armor Games
-- Improve search function for Armor Games
 - Scrape direct game link from Yandex Games
 - Be able to bypass/not have captcha page shown for Yandex
 - Support itch.io
