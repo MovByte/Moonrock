@@ -232,7 +232,6 @@ app.use('/armorgames', async (req, res) => {
             gameType = 'Flash';
             console.log(`Retrieving with id ${id} and name ${name} from Armor Games and detected game type Flash`);
             html = await fetchGame(`https://armorgames.com${gameResult.url}`, 'Armor Games', id);
-            //console.log(html)
             const $ = cheerio.load(html);
             game = $('param[name="movie"]').attr('value');
           } else {
@@ -248,7 +247,7 @@ app.use('/armorgames', async (req, res) => {
           searchResults = {
             id: id,
             title: gameResult.label,
-            cover: cover, // https://gamemedia.armorgames.com/16083/icn_feat.png https://gamemedia.armorgames.com/16083/icn_thmb.png
+            cover: cover, // TODO: Get better image https://gamemedia.armorgames.com/16083/icn_feat.png https://gamemedia.armorgames.com/16083/icn_thmb.png
             gameUrl: `https://armorgames.com${url}`,
             gameType: gameType,
             directLink: game
