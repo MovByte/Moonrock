@@ -17,3 +17,5 @@ Whimsy, made the frontend [GitHub](https://github.com/InAWhimsicalManner) [Disco
 endlessvortex, original idea [GitHub](https://github.com/MovByte) [Discord](https://discord.com/users/980548613614764093)
 <br />
 g9aerospace, inspiration [GitHub](https://github.com/g9militantsYT) [Discord](https://discord.com/users/928267278540242964)
+<br />
+robtyw, fat guy [Discord](https://discord.com/users/772639576875073556)
