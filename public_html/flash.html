@@ -29,6 +29,7 @@
         </div>
     </section>
     <div id="player"></div>
+    <input type="button" value="Fullscreen" onclick="fullscreen()">
     <script>
         let player = window.RufflePlayer.newest().createPlayer();
         let gamePath = localStorage.getItem('gamePath');
@@ -42,6 +43,9 @@
                 player.style.height = player.metadata.height + 'px';
             }
         });
+        function fullscreen() {
+            player.requestFullscreen();
+        };
     </script>
 </body>
 </html>

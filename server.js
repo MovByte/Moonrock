@@ -296,46 +296,46 @@ app.use('/api/search', async (req, res) => {
       const limit = req.query.limit || process.env.QUERY_LIMIT || null;
       var crazyGamesApiUrl = `https://api.crazygames.com/v3/en_US/search?q=${searchTerm}&limit=${limit}&includeTopGames=true`;
       var yandexGamesApiUrl = `https://yandex.com/games/api/catalogue/v3/search/?query=${searchTerm}&games_count=${limit}`;
-      var gameFlareApiUrl = `https://www.gameflare.com/search/ajax/`;
+      //var gameFlareApiUrl = `https://www.gameflare.com/search/ajax/`;
       //const armorGamesApiUrl = `https://armorgames.com/service/game-search`;
       if (limit === null) {
         console.log('No limit specified')
         yandexGamesApiUrl = `https://yandex.com/games/api/catalogue/v3/search/?query=${searchTerm}`;
         crazyGamesApiUrl = `https://api.crazygames.com/v3/en_US/search?q=${searchTerm}&includeTopGames=true`;
       };
-      const gameFlareApiResponse = await fetch(gameFlareApiUrl, {
-        "credentials": "include",
-        "headers": {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0",
-            "Accept": "*/*",
-            "Accept-Language": "en,en-US;q=0.5",
-            "Prefer": "safe",
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-            "X-CSRF-TOKEN": "0WguwWGV0sGyspgl8CpmR9s3AaPsLtrCf23B4Udr",
-            "X-Requested-With": "XMLHttpRequest",
-            "Sec-GPC": "1",
-            "Sec-Fetch-Dest": "empty",
-            "Sec-Fetch-Mode": "cors",
-            "Sec-Fetch-Site": "same-origin"
-        },
-        "referrer": "https://www.gameflare.com/",
-        "body": `type=search-suggestions&term=${searchTerm.replace(' ', '+')}`,
-        "method": "POST",
-        "mode": "cors"
-      });
-      if (!gameFlareApiResponse.ok) {
-        throw new Error(`Failed to fetch data from GameFlare API (${gameFlareApiResponse.status} ${gameFlareApiResponse.statusText})`);
-      };
-      const gameFlareApiResponseJson = await gameFlareApiResponse.json();
-      if (!gameFlareApiResponseJson || !Array.isArray(gameFlareApiResponseJson)) {
-        throw new Error(`Unexpected response format from GameFlare API (${gameFlareApiResponse.status} ${gameFlareApiResponse.statusText})`);
-      };
-      const searchResultsGameFlare = gameFlareApiResponseJson.results.map(result => ({
-        title: result.alt,
-        gameUrl: result.src,
-        cover: result.src,
-        provider: 'gameFlare'
-       }));
+//      const gameFlareApiResponse = await fetch(gameFlareApiUrl, {
+//        "credentials": "include",
+//        "headers": {
+//            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0",
+//            "Accept": "*/*",
+//            "Accept-Language": "en,en-US;q=0.5",
+//            "Prefer": "safe",
+//            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+//            "X-CSRF-TOKEN": "0WguwWGV0sGyspgl8CpmR9s3AaPsLtrCf23B4Udr",
+//            "X-Requested-With": "XMLHttpRequest",
+//            "Sec-GPC": "1",
+//            "Sec-Fetch-Dest": "empty",
+//            "Sec-Fetch-Mode": "cors",
+//            "Sec-Fetch-Site": "same-origin"
+//        },
+//        "referrer": "https://www.gameflare.com/",
+//        "body": `type=search-suggestions&term=${searchTerm.replace(' ', '+')}`,
+//        "method": "POST",
+//        "mode": "cors"
+//      });
+//      if (!gameFlareApiResponse.ok) {
+//        throw new Error(`Failed to fetch data from GameFlare API (${gameFlareApiResponse.status} ${gameFlareApiResponse.statusText})`);
+//      };
+//      const gameFlareApiResponseJson = await gameFlareApiResponse.json();
+//      if (!gameFlareApiResponseJson || !Array.isArray(gameFlareApiResponseJson)) {
+//        throw new Error(`Unexpected response format from GameFlare API (${gameFlareApiResponse.status} ${gameFlareApiResponse.statusText})`);
+//      };
+//      const searchResultsGameFlare = gameFlareApiResponseJson.results.map(result => ({
+//        title: result.alt,
+//        gameUrl: result.src,
+//        cover: result.src,
+//        provider: 'gameFlare'
+//       }));
 //      const armorGamesApiResponse = await fetch(armorGamesApiUrl, {
 //        "credentials": "omit",
 //        "headers": {
