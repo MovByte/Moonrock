@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <a onclick="playArmor('${result.id}')" target="_blank">Play Game</a>
                     <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
                 `;
-                } else {
+                } else if (result.provider === "crazyGames") {
                     gameElement.innerHTML = `
                     <h3>${result.title}</h3>
                     <p>Provider: Crazy Games</p>

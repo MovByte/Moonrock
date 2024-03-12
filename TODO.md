@@ -3,6 +3,7 @@
 - Automatically download game list from Armor Games
 - Scrape direct game link from Yandex Games
 - Be able to bypass/not have captcha page shown for Yandex
+- Search only using a specific provider
 - Support itch.io
 - Support poki.com
 - Support agame.com

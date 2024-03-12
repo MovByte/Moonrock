@@ -408,6 +408,7 @@ app.use('/api/search', async (req, res) => {
           title: result.name,
           directLink: `https://games.crazygames.com/en-US/${result.slug}/index.html`,
           cover: `https://images.crazygames.com/${result.cover}`,
+          provider: 'crazyGames',
           mobileFriendly: result.mobileFriendly,
         }));
       const flashpointApiUrl = `https://db-api.unstable.life/search?smartSearch=${searchTerm}&filter=true&fields=id,title,developer,publisher,platform,tags,originalDescription`;
