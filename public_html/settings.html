@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Moonrock</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+    <script src="assets/script.js"></script>
+    <meta name="title" content="Moonrock">
+</head>
+<body>
+    <section class="navbar">
+        <button type="button"><img src="assets/images/vyper.png"></button>
+        <div id="navbar">
+            <a href="settings.html">Settings</a>
+            <a href="auth/discord" id="login">Login</a>
+        </div>
+    </section>
+    <container id="settings">
+        <form id="flashpointZip">
+            <p>Use Flashpoint zip instead of launch command? <select id="flashpointZip">
+                <option value="true">Yes</option>
+                <option value="false">No</option></select></p>
+        </form>
+    </container>
+    <script>
+        document.getElementById("flashpointZip").value = localStorage.getItem("useFlashpointZip");
+        function update(event) {
+            event.preventDefault();
+            useflashpointzip = document.getElementById("flashpointZip").value
+            if (useflashpointzip === "true") {
+                localStorage.setItem("useflashpointzip", "true");
+                alert("Saved!")
+            } else if (useflashpointzip === "false") {
+                localStorage.setItem("useflashpointzip", "false");
+                alert("Saved!")
+            } else {
+                alert("An error occurred. Please try again.")
+                console.log(useflashpointzip)
+            }
+        }
+        document.getElementById("settings").addEventListener("change", update);</script>
+</body>
+</html>
