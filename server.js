@@ -30,7 +30,22 @@ async function fetchGame(url, provider, id) {
       console.log(`Reading from debug/armorgames-${id}.html`);
       return await fs.readFile(`debug/armorgames-${id}.html`, 'utf8');
     } else {
-      const response = await fetch(url)
+      const response = await fetch(url, {
+        "credentials": "include",
+        "headers": {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+          "Accept-Language": "en,en-US;q=0.5",
+          "Prefer": "safe",
+          "Upgrade-Insecure-Requests": "1",
+          "Sec-Fetch-Dest": "document",
+          "Sec-Fetch-Mode": "navigate",
+          "Sec-Fetch-Site": "none",
+          "Sec-Fetch-User": "?1"
+        },
+        "method": "GET",
+        "mode": "cors"
+      });
       const text = await response.text();
       await fs.writeFile(`debug/armorgames-${id}.html`, text);
       console.log(`Saved ${id} to debug/armorgames-${id}.html`);
@@ -42,7 +57,22 @@ async function fetchGame(url, provider, id) {
       console.log(`Reading from debug/agamekids-${id}.html`);
       return await fs.readFile(`debug/agamekids-${id}.html`, 'utf8');
     } else {
-      const response = await fetch(url)
+      const response = await fetch(url, {
+        "credentials": "include",
+        "headers": {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+          "Accept-Language": "en,en-US;q=0.5",
+          "Prefer": "safe",
+          "Upgrade-Insecure-Requests": "1",
+          "Sec-Fetch-Dest": "document",
+          "Sec-Fetch-Mode": "navigate",
+          "Sec-Fetch-Site": "none",
+          "Sec-Fetch-User": "?1"
+        },
+        "method": "GET",
+        "mode": "cors"
+      });
       const text = await response.text();
       await fs.writeFile(`debug/agamekids-${id}.html`, text);
       console.log(`Saved ${id} to debug/agamekids-${id}.html`);
@@ -489,7 +519,6 @@ app.get('/api/search', async (req, res) => {
           description: result.originalDescription,
           cover: `https://infinity.unstable.life/images/Logos/${result.id.substring(0,2)}/${result.id.substring(2,4)}/${result.id}.png?type=jpg`,
           directLink: `https://ooooooooo.ooo/?${result.id}`,
-          gameFile: `https://download.unstable.life/gib-roms/Games/${result.id}`,
           getInfo: `https://ooooooooo.ooo/get?id=${result.id}`,
         }));
       //const combinedResults = [...searchResultsArmorGames, ...searchResultsYandexGames, ...searchResultsCrazyGames, ...searchResultsFlashpoint];
