@@ -7,6 +7,7 @@
 - Support itch.io
 - Support poki.com
 - Support agame.com
+- Support kids.agame.com
 - Support gameflare.com
 - Support kongregate.com
 - Support now.gg (games)
