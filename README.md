@@ -19,5 +19,3 @@ endlessvortex, original idea [GitHub](https://github.com/MovByte) [Discord](http
 g9aerospace, inspiration [GitHub](https://github.com/g9militantsYT) [Discord](https://discord.com/users/928267278540242964)
 <br />
 robtyw, fat guy [Discord](https://discord.com/users/772639576875073556)
-<br />
-Xoui, the guy who's currently deving on this [Discord](https://discord.com/users/1071202897062269099)
