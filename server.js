@@ -158,7 +158,15 @@ app.use('/flash', async (req, res) => {
     res.status(404).json({ error: 'UUID is invalid' });
   } else {
     const json = await response.json();
-    res.json(json.launchCommand);
+    res.json({
+      uuid: json.uuid,
+      title: json.title,
+      utcMilli: json.utcMilli,
+      extreme: json.extreme,
+      gamePath: json.launchCommand,
+      zipPath: `https://download.unstable.life/gib-roms/Games/${json.uuid}-${json.utcMilli}.zip`,
+      gameLocationOnZip: decodeURIComponent('content/' + new URL(json.launchCommand).hostname + new URL(json.launchCommand).pathname),
+    });
   }
 });
 
@@ -443,6 +451,32 @@ app.use('/api/search', async (req, res) => {
     }
   } else {
     res.redirect('/');
+  }
+});
+
+app.get('/proxy', async (req, res) => {
+  const url = req.query.url;
+  if (url === undefined) {
+    return res.status(400).json({ error: "URL is required" });
+  } else if (!url.startsWith("https://download.unstable.life/gib-roms/Games/")) {
+    return res.status(400).json({ error: "URL isn't invalid" });
+  } else if (!url.endsWith(".zip")) {
+    return res.status(400).json({ error: "URL isn't invalid" });
+  } else {
+    try {
+      console.log(`Fetching file from ${url}`)
+      response = await fetch(url);
+      if (response.ok) {
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Content-Disposition", `attachment; filename=${url.split("/").pop()}`);
+        res.send(Buffer.from(await response.arrayBuffer()));
+      } else {
+        res.status(500).json({ error: "Failed to fetch file" });
+      }
+    } catch (error) {
+      res.status(500).json({ error: error });
+      console.error(error);
+    }
   }
 });
 

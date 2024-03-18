@@ -5,6 +5,7 @@
     <title>Moonrock</title>
     <link rel="stylesheet" href="assets/styles.css" />
     <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         body {
             margin: 0;
@@ -13,11 +14,14 @@
         #player {
             display: flex;
             border: none;
-            height: auto;
-            width: auto;
+            position: fixed;
+        }
+        .content {
+            display: block;
             align-items: center;
             justify-content: center;
-            position: fixed;
+            height: 100%;
+            width: 100%;
         }
     </style>
 </head>
@@ -28,15 +32,58 @@
             <a href="auth/discord" id="login">Login</a>
         </div>
     </section>
-    <div id="player"></div>
-    <input type="button" value="Fullscreen" onclick="fullscreen()">
+    <div class="content">
+        <div id="player"></div>
+        <input type="button" value="Fullscreen" onclick="fullscreen()">
+        <p id="zipFlashpoint" style="display: block; color: whitesmoke;">Use Flashpoint zip instead of direct link? <select id="flashpointZip">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </select></p>
+    </div>
     <script>
         let player = window.RufflePlayer.newest().createPlayer();
         let gamePath = localStorage.getItem('gamePath');
+        let provider = localStorage.getItem('provider');
+        let zipPath = undefined;
+        if (localStorage.getItem('provider') === "flashpoint") {
+            zipPath = localStorage.getItem('zipPath');
+            document.getElementById("zipFlashpoint").style.display = "block";
+            document.getElementById("flashpointZip").value = localStorage.getItem("useFlashpointZip") || "false";
+        }
+        document.getElementById("flashpointZip").addEventListener("change", function() {
+            localStorage.setItem("useFlashpointZip", document.getElementById("flashpointZip").value);
+            location.reload();
+        });
         player.config.base = gamePath.substring(0, gamePath.lastIndexOf('/') + 1);
         player.config.allowScriptAccess = true;
         document.querySelector("#player").append(player);
-        player.load(gamePath);
+        if (provider === "flashpoint" && localStorage.getItem('useFlashpointZip') === "true") {
+            (async () => {
+                try {
+                    if (zipPath === undefined) {
+                        throw new Error('Zip path not found in localStorage.');
+                        alert('An error occurred.');
+                    }
+                    const zip = await JSZip.loadAsync(await fetch(`proxy/?url=${zipPath}`).then(r => r.blob()));
+                    console.log(Object.keys(zip.files));
+                    const gameFileData = await zip.file(`content/${new URL(gamePath).hostname}${new URL(gamePath).pathname}`);
+                    console.log(`Searching for: content/${new URL(gamePath).hostname}${new URL(gamePath).pathname}`);
+                    if (gameFileData === null) {
+                        throw new Error(`File not found in zip: ${zipPath}`);
+                        alert('An error occurred.');
+                    }
+                    const gameBlobUrl = URL.createObjectURL(await gameFileData.async('blob'));
+                    player.load(gameBlobUrl);
+                } catch (error) {
+                    console.error(error);
+                    alert('An error occurred.');
+                };
+            })();
+        //} else if (zipPath !== undefined) {
+        //    player.load(gamePath);
+        } else {
+            player.load(gamePath);
+        }
         player.addEventListener('loadedmetadata', () => {
             if (player.metadata.width > 1 && player.metadata.height > 1) {
                 player.style.width  = player.metadata.width  + 'px';

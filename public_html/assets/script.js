@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+    localStorage.removeItem('gamePath');
+    localStorage.removeItem('URL')
+    localStorage.removeItem('provider')
     window.searchGames = async (event) => {
         event.preventDefault();
 
@@ -54,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     gameElement.innerHTML = `
                     <h3>${result.title}</h3>
                     <p>Provider: Crazy Games</p>
-                    <a onclick="playGame('${result.directLink}', '${result.title}')" target="_blank">Play Game</a>
+                    <a onclick="playCrazygames('${result.directLink}', '${result.title}')" target="_blank">Play Game</a>
                     <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
                 `;
                 }
@@ -65,25 +68,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 });
-function playGame(url, gameName) {
-    if (localStorage.getItem('userId') != null) {
-        fetch(`play?userId=${localStorage.getItem('userId')}&gameName=${gameName}`);
-    };
+function playCrazygames(url, gameName) {
+    //if (localStorage.getItem('userId') != null) {
+    //    fetch(`play?userId=${localStorage.getItem('userId')}&gameName=${gameName}`);
+    //};
+    localStorage.setItem('provider', 'crazygames');
     localStorage.setItem('URL', url);
     window.location.href = 'go.html';
 }
 async function playFlashpoint(id, gameName) {
-    if (localStorage.getItem('userId') != null) {
-        fetch(`play?userId=${localStorage.getItem('userId')}&gameName=${gameName}`);
-    };
+    //if (localStorage.getItem('userId') != null) {
+    //    fetch(`play?userId=${localStorage.getItem('userId')}&gameName=${gameName}`);
+    //};
     const get = `flash?id=${id}`;
     f = fetch(get)
         .then(async response => {
             if (response.status == 404) {
                 alert('Game not found. Please report this to the developer.');
             } else {
-                gamePath = await response.json();
-                localStorage.setItem('gamePath', gamePath);
+                response = await response.json();
+                localStorage.setItem('provider', 'flashpoint');
+                localStorage.setItem('gamePath', response.gamePath);
+                localStorage.setItem('zipPath', response.zipPath)
                 window.location.href = 'flash.html';
             }
         });
@@ -99,6 +105,7 @@ async function playArmor(id) {
                 alert('Game not found. Please report this to the developer.');
             } else if (response.status === 200) {
                 response = await response.json();
+                localStorage.setItem('provider', 'armorgames');
                 if (response.gameType === "Flash") {
                     localStorage.setItem('gamePath', response.directLink);
                     window.location.href = 'flash.html';
