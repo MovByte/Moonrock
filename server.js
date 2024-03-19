@@ -343,7 +343,7 @@ app.get('/crazygames', async (req, res) => {
   };
 });
 
-app.use(express.static(path.join(__dirname, 'public_html')));
+app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] }));
 
 app.get('/api/search', async (req, res) => {
   console.log('Query:', req.query)
