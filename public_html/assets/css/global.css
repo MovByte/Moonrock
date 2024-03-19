@@ -199,28 +199,28 @@ div a:hover {
 
 /* Define scrollbar track */
 ::-webkit-scrollbar {
-    width: 10px; /* Width of the scrollbar */
+    width: 4px;
 }
 
 /* Define scrollbar thumb */
 ::-webkit-scrollbar-thumb {
-    background-color: #0067eed6; /* Electronic blue color */
-    border-radius: 1px; /* Rounded corners */
+    background-color: #3a3a3ad6; 
+
 }
 
 /* Define scrollbar track when scrolling */
 ::-webkit-scrollbar-track {
-    background-color: #000000; /* Black background color */
+    background-color: #000000;
 }
 
 /* Define scrollbar thumb when hovering */
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #1c82fe; /* Lighter shade of blue */
+    background-color: #828282d6
 }
 
 /* Define scrollbar thumb when active (clicking and dragging) */
 ::-webkit-scrollbar-thumb:active {
-    background-color: #003f80; /* Darker shade of blue */
+    background-color: #6d7684d6; /* Darker shade of blue */
 }
 
 /* Define scrollbar thumb when animating */
