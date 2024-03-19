@@ -75,8 +75,126 @@ body .email {
     color: var(--email-color);
 }
 
-.hamburger-icon {
-    z-index: 10010;
+/* Section Stylings */
+section button {
+    padding: 0;
+    border: none;
+    background: none;
+    transform: scale(1);
+    transition: transform 0.3s ease-out;
+}
+section {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: transparent;
+    display: flex;
+    justify-content: space-between;
+    z-index: 100;
+    font-family: Rubik Moonrocks;
+    align-items: center;
+    font-size: 30px;
+    padding: 20px 50px;
+    word-spacing: 10px;
+}
+
+/*Search*/
+.search-bar {
+    width: 100%;
+    max-width: 700px;
+    background: gray;   
+    display: flex;
+    align-items: center;
+    border-radius: 60px;
+    padding: 2.5px 5px;
+    margin: 60px;
+    transition: transform 0.3s ease-out;
+}
+.search-bar input {
+    background: none;
+    flex: 1;
+    border: 0;
+    outline: none;
+    padding: 24px 20px;
+    font-size: 25px;
+}
+.search-bar button {
+    width: 80px;
+    height: 60px;
+    border: 0;
+    border-radius: 50%;
+    transform: rotate(0deg);
+    transition: transform 0.5s ease-out;
+}
+#searching {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30vh;
+}
+section button:hover {
+    transform: scale(2);
+    transition: transform 350ms ease-in-out;
+}
+.search-bar button:hover {
+    transform: rotate(360deg);
+    transition: transform 500ms ease-in-out;
+}
+.search-bar:hover {
+    transform: scale(1.1);
+    transition: transform 500ms ease-in-out;
+    box-shadow: 0px 0px 15px 5px gray;
+}
+
+.search-result {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+.search-result:hover {
+    transform: scale(1.05);
+}
+.search-result h3 {
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+.search-result p {
+    color: #666;
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+.search-result a {
+    display: inline-block;
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease-in-out;
+}
+.search-result a:hover {
+    background-color: #297fb8;
+}
+#search-results {
+    overflow: auto;
+}
+
+/*Divs*/
+div a:link, div a:visited, div a:active {
+    text-decoration: none;
+    color: gray;
+    transition: 250ms ease-in-out;
+}
+div a:hover {
+    color:white;
+    font-size: 100%;
+    text-shadow: 1px 1px 20px;
 }
 
 /* Define scrollbar track */
