@@ -20,3 +20,4 @@
 - Bookmark function
 - Download game function (offline)
 - Make a Discord bot to show the user their playtime, history, leaderboard
+- Fill tos and pp pages with actual legal data (g9 has provided sample gpt data)
