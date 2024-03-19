@@ -522,7 +522,7 @@ app.get('/api/search', async (req, res) => {
         }));
       //const combinedResults = [...searchResultsArmorGames, ...searchResultsYandexGames, ...searchResultsCrazyGames, ...searchResultsFlashpoint];
       //const combinedResults = { armorGames: searchResultsArmorGames, yandexGames: searchResultsYandexGames, crazyGames: searchResultsCrazyGames, flashpoint: searchResultsFlashpoint };
-      const combinedResults = { ...searchResultsAgameKids, ...searchResultsArmorGames, ...searchResultsCrazyGames, ...searchResultsFlashpoint };
+      const combinedResults = { ...searchResultsArmorGames, ...searchResultsCrazyGames, ...searchResultsFlashpoint };
       res.json(combinedResults);
     } catch (error) {
       console.error('Error fetching search results:', error);
