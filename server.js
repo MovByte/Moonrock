@@ -49,36 +49,34 @@ async function fetchGame(url, provider, id) {
       const text = await response.text();
       await fs.writeFile(`debug/armorgames-${id}.html`, text);
       console.log(`Saved ${id} to debug/armorgames-${id}.html`);
-      return await text;
-      //return await fs.readFile(`debug/armorgames-${id}.html`, 'utf8');
+      return await fs.readFile(`debug/armorgames-${id}.html`, 'utf8');
     }
-  } else if (provider === "Agame Kids") {
-    if (fs.existsSync(`debug/agamekids-${id}.html`)) {
-      console.log(`Reading from debug/agamekids-${id}.html`);
-      return await fs.readFile(`debug/agamekids-${id}.html`, 'utf8');
-    } else {
-      const response = await fetch(url, {
-        "credentials": "include",
-        "headers": {
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
-          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-          "Accept-Language": "en,en-US;q=0.5",
-          "Prefer": "safe",
-          "Upgrade-Insecure-Requests": "1",
-          "Sec-Fetch-Dest": "document",
-          "Sec-Fetch-Mode": "navigate",
-          "Sec-Fetch-Site": "none",
-          "Sec-Fetch-User": "?1"
-        },
-        "method": "GET",
-        "mode": "cors"
-      });
-      const text = await response.text();
-      await fs.writeFile(`debug/agamekids-${id}.html`, text);
-      console.log(`Saved ${id} to debug/agamekids-${id}.html`);
-      return await fs.readFile(`debug/agamekids-${id}.html`, 'utf8');
-    }
-  }
+//  } else if (provider === "Agame Kids") {
+//    if (fs.existsSync(`debug/agamekids-${id}.html`)) {
+//      console.log(`Reading from debug/agamekids-${id}.html`);
+//      return await fs.readFile(`debug/agamekids-${id}.html`, 'utf8');
+//    } else {
+//      const response = await fetch(url, {
+//        "credentials": "include",
+//        "headers": {
+//          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
+//          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",          "Accept-Language": "en,en-US;q=0.5",
+//          "Prefer": "safe",
+//          "Upgrade-Insecure-Requests": "1",
+//          "Sec-Fetch-Dest": "document",
+//          "Sec-Fetch-Mode": "navigate",
+//          "Sec-Fetch-Site": "none",
+//          "Sec-Fetch-User": "?1"
+//        },
+//        "method": "GET",
+//        "mode": "cors"
+//      });
+//      const text = await response.text();
+//      await fs.writeFile(`debug/agamekids-${id}.html`, text);
+//      console.log(`Saved ${id} to debug/agamekids-${id}.html`);
+//      return await fs.readFile(`debug/agamekids-${id}.html`, 'utf8');
+//    }
+//  }
   //if (name === "Crazy Games") {
   //  fetch(url).then(response => response.text()).then(text => {
   //    fs.writeFile(`debug/crazygames-${id}.html`, text);
@@ -91,7 +89,8 @@ async function fetchGame(url, provider, id) {
   //    console.log(`Saved ${id} to debug/yandexgames-${id}.html`);
   //  });
   //};
-};
+}
+}
 app.use(cookieParser())
 
 passport.use(new DiscordStrategy({
@@ -242,14 +241,14 @@ app.use('/flash', async (req, res) => {
 //  }
 //});
 
-app.use('/agamekids', async (req, res) => {
-  const slug = req.query.slug;
-  if (slug === undefined) {
-    res.status(400).json({ error: 'Slug is required' });
-  } else {
-    const fetched = await fetchGame(`https://www.kids.agame.com/game/${slug}`, "Agame Kids", slug);
-  }
-});
+//app.use('/agamekids', async (req, res) => {
+//  const slug = req.query.slug;
+//  if (slug === undefined) {
+//    res.status(400).json({ error: 'Slug is required' });
+//  } else {
+//    const fetched = await fetchGame(`https://www.kids.agame.com/game/${slug}`, "Agame Kids", slug);
+//  }
+//});
 
 app.use('/armorgames', async (req, res) => {
   var id = null;
@@ -354,7 +353,7 @@ app.get('/api/search', async (req, res) => {
       const limit = req.query.limit || process.env.QUERY_LIMIT || null;
       var crazyGamesApiUrl = `https://api.crazygames.com/v3/en_US/search?q=${searchTerm}&limit=${limit}&includeTopGames=true`;
       var yandexGamesApiUrl = `https://yandex.com/games/api/catalogue/v3/search/?query=${searchTerm}&games_count=${limit}`;
-      var agameKidsApiUrl = `https://www.kids.agame.com/search.json?term=${searchTerm}`
+      //var agameKidsApiUrl = `https://www.kids.agame.com/search.json?term=${searchTerm}`
       //var gameFlareApiUrl = `https://www.gameflare.com/search/ajax/`;
       //const armorGamesApiUrl = `https://armorgames.com/service/game-search`;
       if (limit === null) {
@@ -362,36 +361,36 @@ app.get('/api/search', async (req, res) => {
         yandexGamesApiUrl = `https://yandex.com/games/api/catalogue/v3/search/?query=${searchTerm}`;
         crazyGamesApiUrl = `https://api.crazygames.com/v3/en_US/search?q=${searchTerm}&includeTopGames=true`;
       };
-      const agameKidsApiResponse = await fetch(agameKidsApiUrl, {
-        "credentials": "include",
-        "headers": {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-            "Accept-Language": "en,en-US;q=0.5",
-            "Upgrade-Insecure-Requests": "1",
-            "Sec-Fetch-Dest": "document",
-            "Sec-Fetch-Mode": "navigate",
-            "Sec-Fetch-Site": "none",
-            "Sec-Fetch-User": "?1"
-        },
-        "method": "GET",
-        "mode": "cors"
-      });
-      if (!agameKidsApiResponse.ok) {
-        throw new Error(`Failed to fetch data from Agame Kids API (${agameKidsApiResponse.status} ${agameKidsApiResponse.statusText})`);
-      };
-      const agameKidsApiResponseJson = await agameKidsApiResponse.json();
-      if (!agameKidsApiResponseJson.games || !Array.isArray(agameKidsApiResponseJson.games)) {
-        throw new Error(`Unexpected response format from Agame Kids API (${agameKidsApiResponse.status} ${agameKidsApiResponse.statusText})`);
-      };
-      const searchResultsAgameKids = agameKidsApiResponseJson.games.map(result => ({
-        title: result.title,
-        slug: new URL(result.url).pathname.split('/').pop(),
-        gameUrl: result.url,
-        cover: result.image,
-        spil_id: result.spil_id,
-        provider: 'agameKids'
-      }));
+      //const agameKidsApiResponse = await fetch(agameKidsApiUrl, {
+      //  "credentials": "include",
+      //  "headers": {
+      //      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0",
+      //      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+      //      "Accept-Language": "en,en-US;q=0.5",
+      //      "Upgrade-Insecure-Requests": "1",
+      //      "Sec-Fetch-Dest": "document",
+      //      "Sec-Fetch-Mode": "navigate",
+      //      "Sec-Fetch-Site": "none",
+      //      "Sec-Fetch-User": "?1"
+      //  },
+      //  "method": "GET",
+      //  "mode": "cors"
+      //});
+      //if (!agameKidsApiResponse.ok) {
+      //  throw new Error(`Failed to fetch data from Agame Kids API (${agameKidsApiResponse.status} ${agameKidsApiResponse.statusText})`);
+      //};
+      //const agameKidsApiResponseJson = await agameKidsApiResponse.json();
+      //if (!agameKidsApiResponseJson.games || !Array.isArray(agameKidsApiResponseJson.games)) {
+      //  throw new Error(`Unexpected response format from Agame Kids API (${agameKidsApiResponse.status} ${agameKidsApiResponse.statusText})`);
+      //};
+      //const searchResultsAgameKids = agameKidsApiResponseJson.games.map(result => ({
+      //  title: result.title,
+      //  slug: new URL(result.url).pathname.split('/').pop(),
+      //  gameUrl: result.url,
+      //  cover: result.image,
+      //  spil_id: result.spil_id,
+      //  provider: 'agameKids'
+      //}));
 //      const gameFlareApiResponse = await fetch(gameFlareApiUrl, {
 //        "credentials": "include",
 //        "headers": {
