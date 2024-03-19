@@ -18,4 +18,4 @@ endlessvortex, original idea [GitHub](https://github.com/MovByte) [Discord](http
 <br />
 hypedhodi, original idea [Discord](https://discord.com/users/1064073328589021214)
 <br />
-g9aerospace, inspiration [GitHub](https://github.com/g9militantsYT) [Discord](https://discord.com/users/928267278540242964)
+g9aerospace, Frontend and Design [GitHub](https://github.com/g9militantsYT) [Discord](https://discord.com/users/928267278540242964) [g9aerospace.in](https://g9aerospace.in/)
