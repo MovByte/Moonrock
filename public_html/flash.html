@@ -15,13 +15,15 @@
             display: flex;
             border: none;
             position: fixed;
-        }
-        .content {
-            display: block;
-            align-items: center;
+            text-align: center;
             justify-content: center;
-            height: 100%;
+            align-items: center;
+        }
+        .footer {
+            bottom: 0;
             width: 100%;
+            text-align: center;
+            padding: 10px;
         }
     </style>
 </head>
@@ -32,10 +34,11 @@
             <a href="auth/discord" id="login">Login</a>
         </div>
     </section>
-    <div class="content">
-        <div id="player"></div>
+    <div id="player" style="align-items: center;"></div>
+    <div class="footer">
         <input type="button" value="Fullscreen" onclick="fullscreen()">
-        <p id="zipFlashpoint" style="display: block; color: whitesmoke;">Use Flashpoint zip instead of direct link? <select id="flashpointZip">
+        <br>
+        <p id="zipFlashpoint" style="display: none;">Zip mode instead of direct game mode? <select id="flashpointZip">
             <option value="true">Yes</option>
             <option value="false">No</option>
         </select></p>
