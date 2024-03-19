@@ -1,0 +1,16 @@
+header {
+    color: var(--header-text-color);
+    padding: var(--padding-small-width);
+    position: fixed;
+    width: 100%;
+    height: 20px; /* Set your desired height */
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    z-index: 1000;
+    border-radius: var(--section-border-radius);
+    text-align: center;
+    backdrop-filter: blur(3px);
+    background-color: var(--header-bg-color);
+}

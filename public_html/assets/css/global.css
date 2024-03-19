@@ -1,0 +1,118 @@
+@import url(https://fonts.googleapis.com/css2?family=Rubik+Moonrocks&display=swap);
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-bg-color: #000000;
+    --header-bg-color: transparent;
+    --sidebar-bg-color: #0000008f;
+    --footer-bg-color: #000000a9;
+
+    --primary-text-color: #b8b8b8;
+    --header-text-color: #adadad;
+    --sidebar-link-color: #0067eed6;
+    --sidebar-hover-color: #1c82fe;
+    --footer-text-color: #898989;
+    --link-text-color: #0099ff;
+    --link-hover-color: #00ccff;
+    --email-color: #00ff66;
+
+    --padding-large-width: 20px;
+    --padding-medium-width: 15px;
+    --padding-small-width: 10px;
+
+    --margin-large-width: 20px;
+    --margin-medium-width: 15px;
+    --margin-small-width: 10px;
+
+    --section-border-width: 1px;
+    --section-border-color: #666666;
+    --section-border-radius: 6px;
+    --section-bg-color: #20212292;
+
+    --font-family: 'Rubik Moonrocks';
+}
+
+
+body {
+    background-color: var(--primary-bg-color);
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--primary-text-color);
+    margin-left: auto;
+    margin-right: auto;
+    padding: var(--padding-large-width);
+    font-family: var(--font-family);
+}
+
+.fixed-background {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+/* Apply the Red Hat font to specific elements as needed */
+h1, h2, h3, p, a {
+    font-family: var(--font-family);
+}
+
+/* Apply link colors and email color to body text */
+body a {
+    color: var(--link-text-color);
+}
+
+body a:hover {
+    color: var(--link-hover-color);
+}
+
+/* Apply email color to specific elements if needed */
+body .email {
+    color: var(--email-color);
+}
+
+.hamburger-icon {
+    z-index: 10010;
+}
+
+/* Define scrollbar track */
+::-webkit-scrollbar {
+    width: 10px; /* Width of the scrollbar */
+}
+
+/* Define scrollbar thumb */
+::-webkit-scrollbar-thumb {
+    background-color: #0067eed6; /* Electronic blue color */
+    border-radius: 1px; /* Rounded corners */
+}
+
+/* Define scrollbar track when scrolling */
+::-webkit-scrollbar-track {
+    background-color: #000000; /* Black background color */
+}
+
+/* Define scrollbar thumb when hovering */
+::-webkit-scrollbar-thumb:hover {
+    background-color: #1c82fe; /* Lighter shade of blue */
+}
+
+/* Define scrollbar thumb when active (clicking and dragging) */
+::-webkit-scrollbar-thumb:active {
+    background-color: #003f80; /* Darker shade of blue */
+}
+
+/* Define scrollbar thumb when animating */
+@keyframes scrollAnimation {
+    0% { background-color: #0067eed6; } /* Start color */
+    50% { background-color: #1c82fe; } /* Middle color */
+    100% { background-color: #0067eed6; } /* End color */
+}
+
+/* Apply animation to scrollbar thumb */
+::-webkit-scrollbar-thumb {
+    animation: scrollAnimation 2s infinite; /* Apply animation */
+}

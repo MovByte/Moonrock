@@ -1,0 +1,56 @@
+footer {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: var(--footer-bg-color);
+    color: var(--footer-text-color);
+    text-align: center;
+    border-radius: var(--section-border-radius);
+}
+
+.footer-nav {
+    margin-bottom: 10px;
+}
+
+/* Style navigation links in the footer */
+.footer-nav a {
+    color: var(--link-text-color);
+    text-decoration: none;
+    margin: 0 15px;
+}
+
+.footer-nav a:hover {
+    color: var(--link-hover-color);
+}
+
+/* Style the disclaimer */
+.footer p {
+    margin-bottom: 15px;
+}
+
+/* Style the copyright information */
+.footer-copyright {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-top: 15px;
+}
+
+/* Style the layout of navigation links */
+.footer-nav {
+    display: flex;
+    justify-content: center;
+}
+
+/* Separate different sections with margin */
+.footer-nav,
+.footer p,
+.footer-copyright {
+    margin-top: 20px;
+}
+
+/* Set max size for social media icons and logo */
+.footer-social img,
+.footer-logo {
+    max-width: 40px;
+    max-height: 40px;
+    border: none;
+}
