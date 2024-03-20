@@ -33,10 +33,13 @@ jobs:
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
-          source: ./
-          destination: ./_site
+          source: ./ # Source directory
+          destination: ./public # Destination directory changed to 'public'
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-artifact@v2
+        with:
+          name: public # Name of the artifact
+          path: ./public # Path to the public folder
 
   # Deployment job
   deploy:
@@ -46,6 +49,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: public # Name of the artifact to download
+          path: ./public # Path to download the artifact
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
