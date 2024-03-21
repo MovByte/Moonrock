@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    localStorage.removeItem('gamePath');
-    localStorage.removeItem('zipPath');
-    localStorage.removeItem('URL');
-    localStorage.removeItem('provider');
+    //localStorage.removeItem('gamePath');
+    //localStorage.removeItem('zipPath');
+    //localStorage.removeItem('URL');
+    //localStorage.removeItem('provider');
     window.searchGames = async (event) => {
         event.preventDefault();
 
