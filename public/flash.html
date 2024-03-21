@@ -68,6 +68,10 @@
         let gamePath = localStorage.getItem('gamePath');
         let provider = localStorage.getItem('provider');
         let zipPath = undefined;
+        if (gamePath === null || provider === null) {
+            alert('Please pick a game first.');
+            location.href = '/';
+        }
         if (localStorage.getItem('provider') === "flashpoint") {
             zipPath = localStorage.getItem('zipPath');
             document.getElementById("zipFlashpoint").style.display = "block";
