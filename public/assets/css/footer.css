@@ -1,10 +1,13 @@
 footer {
-    margin-top: 20px;
+    margin-top: 80px;
     padding: 20px;
     background-color: var(--footer-bg-color);
     color: var(--footer-text-color);
     text-align: center;
     border-radius: var(--section-border-radius);
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .footer-nav {
