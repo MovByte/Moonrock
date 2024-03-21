@@ -94,6 +94,7 @@
 .search-result a:hover {
     background-color: #297fb8;
     cursor:pointer;
+    font-size: 0.9rem;
 }
 
 .search-result img {
