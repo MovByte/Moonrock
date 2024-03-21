@@ -6,7 +6,6 @@ const sqlite3 = require('sqlite3').verbose();
 const passport = require('passport');
 const DiscordStrategy = require('passport-discord').Strategy; 
 require('dotenv').config();
-const axios = require('axios');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const cheerio = require('cheerio');
@@ -126,16 +125,22 @@ app.get('/auth/discord/callback', async (req, res) => {
   params.append('redirect_uri', process.env.DISCORD_CALLBACK_URL);
 
   try {
-      const response = await axios.post('https://discord.com/api/oauth2/token', params);
-      const { access_token, token_type } = response.data;
+      const response = await fetch('https://discord.com/api/oauth2/token', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: params
+      });
+      const { access_token, token_type } = await response.json();
       console.log(response.data);
       // Store the user ID, username, and global_name to database
-      const userDataResponse = await axios.get('https://discord.com/api/users/@me', {
+      const userDataResponse = await fetch('https://discord.com/api/users/@me', {
           headers: {
               authorization: `${token_type} ${access_token}`
           }
       });
-      const user = userDataResponse.data;
+      const user = await userDataResponse.json();
       console.log(user);
       return res.send(`
           <div style="margin: 300px auto; max-width: 400px; display: flex; flex-direction: column; align-items: center; font-family: sans-serif;">
