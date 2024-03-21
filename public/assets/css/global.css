@@ -107,11 +107,6 @@ div a:link, div a:visited, div a:active {
     color: gray;
     transition: 250ms ease-in-out;
 }
-div a:hover {
-    color:white;
-    font-size: 100%;
-    text-shadow: 1px 1px 20px;
-}
 
 /* Define scrollbar track */
 ::-webkit-scrollbar {
