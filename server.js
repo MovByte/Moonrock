@@ -133,7 +133,7 @@ app.get('/auth/discord/callback', async (req, res) => {
           body: params
       });
       const { access_token, token_type } = await response.json();
-      console.log(response.data);
+      console.log(await response.json());
       // Store the user ID, username, and global_name to database
       const userDataResponse = await fetch('https://discord.com/api/users/@me', {
           headers: {
