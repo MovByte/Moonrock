@@ -17,6 +17,7 @@ document.getElementById("flashpointZip").addEventListener("change", function () 
   });
 player.config.base = gamePath.substring(0, gamePath.lastIndexOf("/") + 1);
 player.config.allowScriptAccess = true;
+player.config.showSwfDownload = true;
 document.querySelector("#player").append(player);
 if (provider === "flashpoint" && localStorage.getItem("useFlashpointZip") === "true") {
   (async () => {
