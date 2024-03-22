@@ -13,7 +13,7 @@
     "passport-strategy": "^1.0.0",
     "path": "^0.12.7",
     "sqlite3": "^5.1.7",
-    "wisp-server-node": "^1.0.4"
+    "wisp-server-node": "^1.0.5"
   },
   "scripts": {
     "start": "node server.js",
