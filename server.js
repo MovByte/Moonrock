@@ -3,8 +3,6 @@ const app = express();
 const path = require('path');
 const fs = require('fs-extra')
 const sqlite3 = require('sqlite3').verbose();
-const passport = require('passport');
-const DiscordStrategy = require('passport-discord').Strategy; 
 require('dotenv').config();
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
@@ -91,29 +89,14 @@ async function fetchGame(url, provider, id) {
 }
 }
 app.use(cookieParser())
-
-passport.use(new DiscordStrategy({
-  clientID: process.env.DISCORD_CLIENT_ID,
-  clientSecret: process.env.DISCORD_CLIENT_SECRET,
-  callbackURL: process.env.DISCORD_CALLBACK_URL,
-  scope: scopes
-},
-function(accessToken, refreshToken, profile, cb) {
-  User.findOrCreate({ discordId: profile.id }, function(err, user) {
-      console.log(profile);
-      console.log(`Access token: ${accessToken}`);
-      console.log(`Refresh token: ${refreshToken}`)
-      return cb(err, user);
-  });
-}));
-app.use(passport.initialize());
-app.use(passport.session());
 db.serialize(() => {
   db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, name TEXT UNIQUE, userId INTEGER, profilepicture TEXT UNIQUE)');
   db.run('CREATE TABLE IF NOT EXISTS game_activity (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, gameName TEXT, playTime DATETIME DEFAULT CURRENT_TIMESTAMP)');
 });
 
-app.get('/auth/discord', passport.authenticate('discord'));
+app.get("/auth/discord", (req, res) => {
+  res.redirect(`https://discord.com/api/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&redirect_uri=${process.env.BASE_PATH}/auth/discord/callback&response_type=code&scope=identify`);
+});
 
 app.get('/auth/discord/callback', async (req, res) => {
   const code = req.query.code;

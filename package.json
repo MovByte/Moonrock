@@ -8,12 +8,8 @@
     "express-session": "^1.18.0",
     "fs-extra": "^11.2.0",
     "passport": "^0.7.0",
-    "passport-discord": "^0.1.4",
-    "passport-oauth2-refresh": "^2.2.0",
-    "passport-strategy": "^1.0.0",
     "path": "^0.12.7",
-    "sqlite3": "^5.1.7",
-    "wisp-server-node": "^1.0.5"
+    "sqlite3": "^5.1.7"
   },
   "scripts": {
     "start": "node server.js",
