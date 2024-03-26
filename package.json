@@ -4,7 +4,7 @@
     "cookie-parser": "^1.4.6",
     "discord.js": "^14.14.1",
     "dotenv": "^16.4.5",
-    "express": "^4.19.1",
+    "express": "^4.19.2",
     "express-session": "^1.18.0",
     "fs-extra": "^11.2.0",
     "passport": "^0.7.0",
