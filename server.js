@@ -124,6 +124,9 @@ app.get('/auth/discord/callback', async (req, res) => {
           }
       });
       const user = await userDataResponse.json();
+      db.run('INSERT INTO users (username, name, userId, profilepicture) VALUES (?, ?, ?, ?)', [user.username, user.username, user.id, `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`], function(err) {
+        console.error(err);
+      });
       console.log(user);
       return res.send(`
           <div style="margin: 300px auto; max-width: 400px; display: flex; flex-direction: column; align-items: center; font-family: sans-serif;">

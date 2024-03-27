@@ -10,35 +10,67 @@
     <meta property="og:title" content="Home">
     <meta property="og:description" content="A gaming search engine">
     <meta property="og:image" content="https://github.com/VyperGroup/Moonrock/blob/dave9123/public/assets/images/vyper.png?raw=true">
-    <meta property="theme-color" content="#2596be">
+    <meta property="og:url" content="https://moonrock.com">
+    <meta property="theme-color" content="#2596be">   
+    
+    <link rel="stylesheet" href="assets/css/global.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+
+    <script src="assets/script.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700&display=swap">
     <title>Moonrock</title>
     <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         body {
+            text-align: center;
             justify-content: center;
             align-items: center;
-            text-align: center;
+            background-image: url('assets/images/moon.jpg');
         }
         #player {
+            display: flex;
             border: none;
+            position: fixed;
             text-align: center;
             justify-content: center;
             align-items: center;
+        }
+        .footer {
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            padding: 10px;
         }
     </style>
 </head>
+
 <body>
-    <div id="player"></div>
-    <input type="button" value="Fullscreen" onclick="fullscreen()">
-    <br>
-    <input type="button" value="Download" onclick="download()">
-    <br>
-    <p id="zipFlashpoint" style="display: none;">Use zip instead of direct game? <select id="flashpointZip">
-        <option value="true">Yes</option>
-        <option value="false">No</option>
-    </select></p>
+
+    <!-- Header -->
+    <header id="header-container">
+    </header>
+
+    <!--Main-->
+    <div id="player" style="align-items: center;"></div>
+    <div class="footer">
+        <input type="button" value="Fullscreen" onclick="fullscreen()">
+        <br>
+        <input type="button" value="Download" onclick="download()">
+        <br>
+        <p id="zipFlashpoint" style="display: none;">Zip mode instead of direct game mode? <select id="flashpointZip">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </select></p>
+    </div>
+
+    <!-- Footer -->
+    <footer id="footer-container">
+    </footer>
+    <script src="assets/js/global.js"></script>
     <script src="assets/js/flash.js"></script>
 </body>
 </html>
