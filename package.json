@@ -1,7 +1,5 @@
 {
   "dependencies": {
-    "@tomphttp/bare-server-node": "^2.0.3",
-    "axios": "^1.6.7",
     "cheerio": "^1.0.0-rc.12",
     "cookie-parser": "^1.4.6",
     "discord.js": "^14.14.1",
@@ -9,10 +7,6 @@
     "express": "^4.18.2",
     "express-session": "^1.18.0",
     "fs-extra": "^11.2.0",
-    "passport": "^0.7.0",
-    "passport-discord": "^0.1.4",
-    "passport-oauth2-refresh": "^2.2.0",
-    "passport-strategy": "^1.0.0",
     "path": "^0.12.7",
     "sqlite3": "^5.1.7"
   },

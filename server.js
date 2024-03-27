@@ -3,10 +3,7 @@ const app = express();
 const path = require('path');
 const fs = require('fs-extra')
 const sqlite3 = require('sqlite3').verbose();
-const passport = require('passport');
-const DiscordStrategy = require('passport-discord').Strategy; 
 require('dotenv').config();
-const axios = require('axios');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const cheerio = require('cheerio');
@@ -92,29 +89,14 @@ async function fetchGame(url, provider, id) {
 }
 }
 app.use(cookieParser())
-
-passport.use(new DiscordStrategy({
-  clientID: process.env.DISCORD_CLIENT_ID,
-  clientSecret: process.env.DISCORD_CLIENT_SECRET,
-  callbackURL: process.env.DISCORD_CALLBACK_URL,
-  scope: scopes
-},
-function(accessToken, refreshToken, profile, cb) {
-  User.findOrCreate({ discordId: profile.id }, function(err, user) {
-      console.log(profile);
-      console.log(`Access token: ${accessToken}`);
-      console.log(`Refresh token: ${refreshToken}`)
-      return cb(err, user);
-  });
-}));
-app.use(passport.initialize());
-app.use(passport.session());
 db.serialize(() => {
   db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, name TEXT UNIQUE, userId INTEGER)');
   db.run('CREATE TABLE IF NOT EXISTS game_activity (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, gameName TEXT, playTime DATETIME DEFAULT CURRENT_TIMESTAMP)');
 });
 
-app.get('/auth/discord', passport.authenticate('discord'));
+app.get('/auth/discord', (req, res) => {
+  res.redirect(`https://discord.com/api/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&redirect_uri=${process.env.DISCORD_CALLBACK_URL}&response_type=code&scope=${scopes.join('%20')}`);
+});
 
 app.get('/auth/discord/callback', async (req, res) => {
   const code = req.query.code;
@@ -126,16 +108,20 @@ app.get('/auth/discord/callback', async (req, res) => {
   params.append('redirect_uri', process.env.DISCORD_CALLBACK_URL);
 
   try {
-      const response = await axios.post('https://discord.com/api/oauth2/token', params);
-      const { access_token, token_type } = response.data;
-      console.log(response.data);
-      // Store the user ID, username, and global_name to database
-      const userDataResponse = await axios.get('https://discord.com/api/users/@me', {
-          headers: {
-              authorization: `${token_type} ${access_token}`
-          }
+      const response = await fetch('https://discord.com/api/oauth2/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams(params)
       });
-      const user = userDataResponse.data;
+      const responsejson = await response.json();
+      const userDataResponse = await fetch('https://discord.com/api/users/@me', {
+        headers: {
+          authorization: `${responsejson.token_type} ${responsejson.access_token}`
+        }
+      });
+      const user = await userDataResponse.json();
       console.log(user);
       return res.send(`
           <div style="margin: 300px auto; max-width: 400px; display: flex; flex-direction: column; align-items: center; font-family: sans-serif;">
