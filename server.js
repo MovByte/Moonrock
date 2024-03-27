@@ -12,13 +12,10 @@ const db = new sqlite3.Database('./data.db');
 var scopes = ['identify'];
 
 app.use(session({
-  secret: process.env.SESSION_SECRET, 
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: {
-    secure: process.env.SECURE, // Set to true if using HTTPS
-    maxAge:  24 * 60 * 60 * 7 * 1000 // Cookie expires after a week
-  }
+  cookie: { secure: process.env.SECURE }
 }));
 
 async function fetchGame(url, provider, id) {
@@ -123,15 +120,16 @@ app.get('/auth/discord/callback', async (req, res) => {
       });
       const user = await userDataResponse.json();
       console.log(user);
-      return res.send(`
-          <div style="margin: 300px auto; max-width: 400px; display: flex; flex-direction: column; align-items: center; font-family: sans-serif;">
-              <h3>Welcome, ${user.global_name}</h3>
-              <script>
-                localStorage.setItem('userId', '${user.id}');
-                window.location.replace('/');
-              </script>
-          </div>
-      `);
+      res.redirect("/");
+      //return res.send(`
+      //    <div style="margin: 300px auto; max-width: 400px; display: flex; flex-direction: column; align-items: center; font-family: sans-serif;">
+      //        <h3>Welcome, ${user.global_name}</h3>
+      //        <script>
+      //          localStorage.setItem('userId', '${user.id}');
+      //          window.location.replace('/');
+      //        </script>
+      //    </div>
+      //`);
   } catch (error) {
       console.log('Error', error);
       return res.send('An error occurred while processing your request.');
