@@ -4,19 +4,10 @@ const path = require('path');
 const fs = require('fs-extra')
 const sqlite3 = require('sqlite3').verbose();
 require('dotenv').config();
-const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const cheerio = require('cheerio');
+const jwt = require('jsonwebtoken');
 const db = new sqlite3.Database('./data.db');
-
-var scopes = ['identify'];
-
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: { secure: process.env.SECURE }
-}));
 
 async function fetchGame(url, provider, id) {
   if (provider === "Armor Games") {
@@ -83,11 +74,14 @@ async function fetchGame(url, provider, id) {
   //    console.log(`Saved ${id} to debug/yandexgames-${id}.html`);
   //  });
   //};
+  }
 }
-}
-app.use(cookieParser())
+
+var scopes = ['identify'];
+app.use(cookieParser(process.env.SESSION_SECRET));
+
 db.serialize(() => {
-  db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, name TEXT UNIQUE, userId INTEGER)');
+  db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, name TEXT UNIQUE, userid BIGINT)');
   db.run('CREATE TABLE IF NOT EXISTS game_activity (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, gameName TEXT, playTime DATETIME DEFAULT CURRENT_TIMESTAMP)');
 });
 
@@ -112,6 +106,9 @@ app.get('/auth/discord/callback', async (req, res) => {
         },
         body: new URLSearchParams(params)
       });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch data from Discord API (${response.status} ${response.statusText})`);
+      }
       const responsejson = await response.json();
       const userDataResponse = await fetch('https://discord.com/api/users/@me', {
         headers: {
@@ -120,16 +117,15 @@ app.get('/auth/discord/callback', async (req, res) => {
       });
       const user = await userDataResponse.json();
       console.log(user);
+      db.run('INSERT INTO users (username, name, userid) VALUES (?, ?, ?)', [user.username, user.global_name, user.id], function(err) {
+        if (err) {
+          return console.log(err.message);
+        }
+        console.log(`A row has been inserted to users with rowId ${this.lastID}`);
+      });
+      const token = await jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '7d' });
+      res.cookie('token', token, { httpOnly: (process.env.SECURE == "true"), secure: (process.env.SECURE == true), maxAge: 7 * 24 * 60 * 60 * 1000 });
       res.redirect("/");
-      //return res.send(`
-      //    <div style="margin: 300px auto; max-width: 400px; display: flex; flex-direction: column; align-items: center; font-family: sans-serif;">
-      //        <h3>Welcome, ${user.global_name}</h3>
-      //        <script>
-      //          localStorage.setItem('userId', '${user.id}');
-      //          window.location.replace('/');
-      //        </script>
-      //    </div>
-      //`);
   } catch (error) {
       console.log('Error', error);
       return res.send('An error occurred while processing your request.');
