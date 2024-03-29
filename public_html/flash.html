@@ -7,23 +7,16 @@
     <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
+        #content{
+            justify-content: center;
+            align-items: center;
+            text-align: center;
         }
         #player {
-            display: flex;
             border: none;
-            position: fixed;
             text-align: center;
             justify-content: center;
             align-items: center;
-        }
-        .footer {
-            bottom: 0;
-            width: 100%;
-            text-align: center;
-            padding: 10px;
         }
     </style>
 </head>
@@ -34,8 +27,8 @@
             <a href="auth/discord" id="login">Login</a>
         </div>
     </section>
-    <div id="player" style="align-items: center;"></div>
-    <div class="footer">
+    <div id="content">
+        <div id="player"></div>
         <input type="button" value="Fullscreen" onclick="fullscreen()">
         <br>
         <p id="zipFlashpoint" style="display: none;">Zip mode instead of direct game mode? <select id="flashpointZip">
@@ -60,7 +53,7 @@
         player.config.base = gamePath.substring(0, gamePath.lastIndexOf('/') + 1);
         player.config.allowScriptAccess = true;
         document.querySelector("#player").append(player);
-        if (provider === "flashpoint" && localStorage.getItem('useFlashpointZip') === "true") {
+        if (provider === "flashpoint" && localStorage.getItem('useFlashpointZip') === "true" && zipPath !== undefined) {
             (async () => {
                 try {
                     if (zipPath === undefined) {
@@ -82,8 +75,6 @@
                     alert('An error occurred.');
                 };
             })();
-        //} else if (zipPath !== undefined) {
-        //    player.load(gamePath);
         } else {
             player.load(gamePath);
         }
