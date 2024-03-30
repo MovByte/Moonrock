@@ -30,15 +30,30 @@ document.addEventListener('DOMContentLoaded', () => {
             resultsArray.forEach(result => {
                 const gameElement = document.createElement('div');
                 gameElement.classList.add('search-result');
-                if (result.getInfo != null) {
+                if (result.provider === "flashpoint") {
                     gameElement.innerHTML = `
-                        <h3>${result.title}</h3>
+                        <h3>${result.title} <img style="max-width: 20px; max-height: 20px;" src="assets/images/unstarred.svg" onclick="starGame('${result.id}', '${result.title}', '${result.provider}')" alt="star"></h3>
                         <p>Provider: Flashpoint</p>
                         <a onclick="playFlashpoint('${result.id}', '${result.title}')" target="_blank">Play Game</a>
                         <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
                     `;
                     searchResultsSection.appendChild(gameElement);
                     return;
+                
+                } else if (result.provider === "armorgames") {
+                    gameElement.innerHTML = `
+                        <h3>${result.title} <img style="max-width: 20px; max-height: 20px;" src="assets/images/unstarred.svg" onclick="starGame('${result.id}', '${result.title}', '${result.provider}')" alt="star"></h3>
+                        <p>Provider: Armor Games</p>
+                        <a onclick="playArmor('${result.id}')" target="_blank">Play Game</a>
+                        <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
+                `;
+                } else if (result.provider === "crazygames") {
+                    gameElement.innerHTML = `
+                    <h3>${result.title} <img style="max-width: 20px; max-height: 20px;" src="assets/images/unstarred.svg" onclick="starGame('${result.id}', '${result.title}', '${result.provider}')" alt="star"></h3>
+                        <p>Provider: Crazy Games</p>
+                        <a onclick="playCrazygames('${result.directLink}', '${result.title}')" target="_blank">Play Game</a>
+                        <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
+                `;
                 //} else if (result.apeRating != null) {
                 //    gameElement.innerHTML = `
                 //    <h3>${result.title}</h3>
@@ -47,20 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 //    <a onclick="playYandex('${result.id}')" target="_blank">Play Game</a>
                 //    <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
                 //`;
-                } else if (result.provider === "armorGames") {
-                    gameElement.innerHTML = `
-                    <h3>${result.title}</h3>
-                    <p>Provider: Armor Games</p>
-                    <a onclick="playArmor('${result.id}')" target="_blank">Play Game</a>
-                    <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
-                `;
-                } else if (result.provider === "crazyGames") {
-                    gameElement.innerHTML = `
-                    <h3>${result.title}</h3>
-                    <p>Provider: Crazy Games</p>
-                    <a onclick="playCrazygames('${result.directLink}', '${result.title}')" target="_blank">Play Game</a>
-                    <img loading="lazy" src="${result.cover}" alt="${result.title} Cover">
-                `;
                 }
                 searchResultsSection.appendChild(gameElement);
             });
@@ -69,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 });
-function playCrazygames(url, gameName) {
+function playCrazygames(url) {
     //if (localStorage.getItem('userId') != null) {
     //    fetch(`play?userId=${localStorage.getItem('userId')}&gameName=${gameName}`);
     //};
@@ -77,7 +78,7 @@ function playCrazygames(url, gameName) {
     localStorage.setItem('URL', url);
     window.location.href = 'go.html';
 }
-async function playFlashpoint(id, gameName) {
+async function playFlashpoint(id) {
     //if (localStorage.getItem('userId') != null) {
     //    fetch(`play?userId=${localStorage.getItem('userId')}&gameName=${gameName}`);
     //};
@@ -131,3 +132,14 @@ async function playArmor(id) {
 //            }
 //        });
 //}
+async function starGame(id, title, provider) {
+    const get = `star?gameId=${id}&gameName=${title}&provider=${provider}`;
+    f = fetch(get)
+        .then(async response => {
+            if (response.status === 200) {
+                alert('Game starred!');
+            } else {
+                alert('An error occurred.');
+            }
+        });
+}

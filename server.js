@@ -82,7 +82,8 @@ app.use(cookieParser(process.env.SESSION_SECRET));
 
 db.serialize(() => {
   db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, name TEXT UNIQUE, userid BIGINT)');
-  db.run('CREATE TABLE IF NOT EXISTS game_activity (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, gameName TEXT, playTime DATETIME DEFAULT CURRENT_TIMESTAMP)');
+  db.run('CREATE TABLE IF NOT EXISTS gameactivity (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, gameName TEXT, gameId, INTEGER, playTime DATETIME DEFAULT CURRENT_TIMESTAMP)');
+  db.run('CREATE TABLE IF NOT EXISTS starredgames (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, gameId INTEGER, provider TEXT, starTime DATETIME DEFAULT CURRENT_TIMESTAMP)');
 });
 
 app.get('/auth/discord', (req, res) => {
@@ -440,7 +441,7 @@ app.get('/api/search', async (req, res) => {
         title: game.label,
         cover: game.thumbnail,
         gameUrl: `https://armorgames.com${game.url}`,
-        provider: 'armorGames'
+        provider: 'armorgames'
 //        directLink: `https://armorgames.com${game.url}`
       }));
 //      const yandexGamesApiResponse = await fetch(yandexGamesApiUrl);
@@ -476,7 +477,7 @@ app.get('/api/search', async (req, res) => {
           title: result.name,
           directLink: `https://games.crazygames.com/en-US/${result.slug}/index.html`,
           cover: `https://images.crazygames.com/${result.cover}`,
-          provider: 'crazyGames',
+          provider: 'crazygames',
           mobileFriendly: result.mobileFriendly,
         }));
       const flashpointApiUrl = `https://db-api.unstable.life/search?smartSearch=${searchTerm}&filter=true&fields=id,title,developer,publisher,platform,tags,originalDescription`;
@@ -499,6 +500,7 @@ app.get('/api/search', async (req, res) => {
           cover: `https://infinity.unstable.life/images/Logos/${result.id.substring(0,2)}/${result.id.substring(2,4)}/${result.id}.png?type=jpg`,
           directLink: `https://ooooooooo.ooo/?${result.id}`,
           getInfo: `https://ooooooooo.ooo/get?id=${result.id}`,
+          provider: 'flashpoint',
         }));
       //const combinedResults = [...searchResultsArmorGames, ...searchResultsYandexGames, ...searchResultsCrazyGames, ...searchResultsFlashpoint];
       //const combinedResults = { armorGames: searchResultsArmorGames, yandexGames: searchResultsYandexGames, crazyGames: searchResultsCrazyGames, flashpoint: searchResultsFlashpoint };
@@ -536,6 +538,37 @@ app.get('/proxy', async (req, res) => {
       res.status(500).json({ error: error });
       console.error(error);
     }
+  }
+});
+
+app.get('/star', async (req, res) => {
+  let token = req.signedCookies.token;
+  if (token === undefined) {
+    return res.status(400).json({ error: "Unauthorized" });
+  } else if (token !== undefined) {
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+      if (err) {
+        return res.status(400).json({ error: "Unauthorized" });
+      } else {
+        req.query.userId = user.id;
+        const userId = req.query.userId;
+        const gameId = req.query.gameId;
+        const provider = req.query.provider;
+        try {
+          db.run('INSERT INTO starredgames (userId, gameId, provider) VALUES (?, ?, ?)', [userId, gameId, provider], function(err) {
+            if (err) {
+              throw new Error("An error occured while trying to store", err.message);
+            }
+            console.log(`A row has been inserted to starredgames with rowId ${this.lastID}`);
+          });
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ error: error });
+        }
+        console.log(`User ${userId} starred game ${gameId} from ${provider}`);
+        res.status(200).json({ success: true });
+      }
+    });
   }
 });
 
