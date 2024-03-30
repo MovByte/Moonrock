@@ -133,21 +133,18 @@ async function playArmor(id) {
 //        });
 //}
 async function starGame(id, title, provider) {
-    const get = `star?gameId=${id}&gameName=${title}&provider=${provider}`;
-    f = fetch(get)
-        .then(async response => {
-            if (response.status === 200) {
-                alert('Game starred!');
-                const starredGame = {
-                    id: id,
-                    title: title,
-                    provider: provider
-                };
-                const starredGames = JSON.parse(localStorage.getItem('starredGames')) || [];
-                starredGames.push(starredGame);
-                localStorage.setItem('starredGames', JSON.stringify(starredGames));
-            } else {
-                console.log(`Failed to store to server. Error: ${response.statusText}`);
-            }
-        });
+    starred = localStorage.getItem('starred');
+    if (starred === null) {
+        starred = [];
+    } else {
+        starred = JSON.parse(starred);
+    }
+    if (starred.includes(id)) {
+        starred.splice(starred.indexOf(id), 1);
+        document.querySelector(`.search-result h3:contains(${title}) img`).src = 'assets/images/unstarred.svg';
+    } else {
+        starred.push(id);
+        document.querySelector(`.search-result h3:contains(${title}) img`).src = 'assets/images/starred.svg';
+    }
+    localStorage.setItem('starred', JSON.stringify(starred));
 }

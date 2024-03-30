@@ -20,3 +20,4 @@
 - Bookmark function
 - Download game function (offline)
 - Make a Discord bot to show the user their playtime, history, leaderboard
+- Starred games

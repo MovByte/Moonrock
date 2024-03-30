@@ -82,8 +82,8 @@ app.use(cookieParser(process.env.SESSION_SECRET));
 
 db.serialize(() => {
   db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, name TEXT UNIQUE, userid BIGINT)');
-  db.run('CREATE TABLE IF NOT EXISTS gameactivity (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, gameName TEXT, gameId, INTEGER, playTime DATETIME DEFAULT CURRENT_TIMESTAMP)');
-  db.run('CREATE TABLE IF NOT EXISTS starredgames (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, gameId INTEGER, provider TEXT, starTime DATETIME DEFAULT CURRENT_TIMESTAMP)');
+  db.run('CREATE TABLE IF NOT EXISTS game_activity (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, gameName TEXT, gameId, INTEGER, playTime DATETIME DEFAULT CURRENT_TIMESTAMP)');
+  //db.run('CREATE TABLE IF NOT EXISTS starredgames (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, gameId INTEGER, provider TEXT, starTime DATETIME DEFAULT CURRENT_TIMESTAMP)');
 });
 
 app.get('/auth/discord', (req, res) => {
@@ -558,36 +558,36 @@ app.get('/proxy', async (req, res) => {
   }
 });
 
-app.get('/star', async (req, res) => {
-  let token = req.signedCookies.token;
-  if (token === undefined) {
-    return res.status(400).json({ error: "Unauthorized" });
-  } else if (token !== undefined) {
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-      if (err) {
-        return res.status(400).json({ error: "Unauthorized" });
-      } else {
-        req.query.userId = user.id;
-        const userId = req.query.userId;
-        const gameId = req.query.gameId;
-        const provider = req.query.provider;
-        try {
-          db.run('INSERT INTO starredgames (userId, gameId, provider) VALUES (?, ?, ?)', [userId, gameId, provider], function(err) {
-            if (err) {
-              throw new Error("An error occured while trying to store", err.message);
-            }
-            console.log(`A row has been inserted to starredgames with rowId ${this.lastID}`);
-          });
-        } catch (error) {
-          console.error(error);
-          res.status(500).json({ error: error });
-        }
-        console.log(`User ${userId} starred game ${gameId} from ${provider}`);
-        res.status(200).json({ success: true });
-      }
-    });
-  }
-});
+//app.get('/star', async (req, res) => {
+//  let token = req.signedCookies.token;
+//  if (token === undefined) {
+//    return res.status(400).json({ error: "Unauthorized" });
+//  } else if (token !== undefined) {
+//    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+//      if (err) {
+//        return res.status(400).json({ error: "Unauthorized" });
+//      } else {
+//        req.query.userId = user.id;
+//        const userId = req.query.userId;
+//        const gameId = req.query.gameId;
+//        const provider = req.query.provider;
+//        try {
+//          db.run('INSERT INTO starredgames (userId, gameId, provider) VALUES (?, ?, ?)', [userId, gameId, provider], function(err) {
+//            if (err) {
+//              throw new Error("An error occured while trying to store", err.message);
+//            }
+//            console.log(`A row has been inserted to starredgames with rowId ${this.lastID}`);
+//          });
+//        } catch (error) {
+//          console.error(error);
+//          res.status(500).json({ error: error });
+//        }
+//        console.log(`User ${userId} starred game ${gameId} from ${provider}`);
+//        res.status(200).json({ success: true });
+//      }
+//    });
+//  }
+//});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
