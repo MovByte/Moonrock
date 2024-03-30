@@ -171,6 +171,7 @@ app.use('/play', async (req, res) => {
 });
 
 app.use('/flash', async (req, res) => {
+  const token = req.signedCookies.token;
   const id = req.query.id;
   const get = `https://ooooooooo.ooo/get?id=${id}`;
   const response = await fetch(get);
@@ -179,6 +180,22 @@ app.use('/flash', async (req, res) => {
     res.status(404).json({ error: 'UUID is invalid' });
   } else {
     const json = await response.json();
+    if (token !== undefined) {
+      try {
+        jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+          if (err === undefined) {
+            db.run('INSERT INTO gameactivity (userId, gameName, gameId) VALUES (?, ?, ?)', [user.id, json.title, json.uuid], function(err) {
+              if (err) {
+                return console.log(err.message);
+              }
+              console.log(`A row has been inserted to gameactivity with rowId ${this.lastID}`);
+            });
+          }
+        });
+      } catch (error) {
+        console.error('Error', error);
+      }
+    }
     res.json({
       uuid: json.uuid,
       title: json.title,

@@ -138,8 +138,16 @@ async function starGame(id, title, provider) {
         .then(async response => {
             if (response.status === 200) {
                 alert('Game starred!');
+                const starredGame = {
+                    id: id,
+                    title: title,
+                    provider: provider
+                };
+                const starredGames = JSON.parse(localStorage.getItem('starredGames')) || [];
+                starredGames.push(starredGame);
+                localStorage.setItem('starredGames', JSON.stringify(starredGames));
             } else {
-                alert('An error occurred.');
+                console.log(`Failed to store to server. Error: ${response.statusText}`);
             }
         });
 }
