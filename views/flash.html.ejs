@@ -24,7 +24,9 @@
     <section class="navbar">
         <button type="button"><img src="assets/images/vyper.png"></button>
         <div id="navbar">
+            <% if (token === undefined) { %>
             <a href="auth/discord" id="login">Login</a>
+            <% }; %>
         </div>
     </section>
     <div id="content">

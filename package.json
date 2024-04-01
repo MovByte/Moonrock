@@ -4,6 +4,7 @@
     "cookie-parser": "^1.4.6",
     "discord.js": "^14.14.1",
     "dotenv": "^16.4.5",
+    "ejs": "^3.1.9",
     "express": "^4.19.2",
     "fs-extra": "^11.2.0",
     "jsonwebtoken": "^9.0.2",

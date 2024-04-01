@@ -1,13 +1,87 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const path = require('path');
 const fs = require('fs-extra')
 const sqlite3 = require('sqlite3').verbose();
-require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const cheerio = require('cheerio');
 const jwt = require('jsonwebtoken');
+const ejs = require('ejs');
 const db = new sqlite3.Database('./data.db');
+
+var scopes = ['identify'];
+app.set('view engine', 'ejs');
+app.use(cookieParser(process.env.SESSION_SECRET));
+db.serialize(() => {
+  db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, name TEXT, userid BIGINT)');
+  db.run('CREATE TABLE IF NOT EXISTS game_activity (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, gameName TEXT, gameId, INTEGER, playTime DATETIME DEFAULT CURRENT_TIMESTAMP)');
+  //db.run('CREATE TABLE IF NOT EXISTS starredgames (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, gameId INTEGER, provider TEXT, starTime DATETIME DEFAULT CURRENT_TIMESTAMP)');
+});
+
+app.get('/auth/discord', (req, res) => {
+  res.redirect(`https://discord.com/api/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&redirect_uri=${process.env.DISCORD_CALLBACK_URL}&response_type=code&scope=${scopes.join('%20')}`);
+});
+
+app.get('/auth/discord/callback', async (req, res) => {
+  const code = req.query.code;
+  const params = new URLSearchParams();
+  params.append('client_id', process.env.DISCORD_CLIENT_ID);
+  params.append('client_secret', process.env.DISCORD_CLIENT_SECRET);
+  params.append('grant_type', 'authorization_code');
+  params.append('code', code);
+  params.append('redirect_uri', process.env.DISCORD_CALLBACK_URL);
+
+  try {
+      const response = await fetch('https://discord.com/api/oauth2/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams(params)
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch data from Discord API (${response.status} ${response.statusText})`);
+      }
+      const responsejson = await response.json();
+      const userDataResponse = await fetch('https://discord.com/api/users/@me', {
+        headers: {
+          authorization: `${responsejson.token_type} ${responsejson.access_token}`
+        }
+      });
+      const user = await userDataResponse.json();
+      console.log(user);
+      // check if user exists in database
+      db.get('SELECT * FROM users WHERE userid = ?', [user.id], async (err, row) => {
+        if (err) {
+          return console.error(err.message);
+        }
+        if (row === undefined) {
+          console.log('User not found in database, creating user');
+          db.run('INSERT INTO users (username, name, userid) VALUES (?, ?, ?)', [user.username, user.username, user.id], function(err) {
+            if (err) {
+              return console.log(err.message);
+            }
+            console.log(`A row has been inserted to users with rowId ${this.lastID}`);
+          });
+        } else {
+          console.log('User found in database, updating user');
+          db.run('UPDATE users SET username = ?, name = ? WHERE userid = ?', [user.username, user.username, user.id], function(err) {
+            if (err) {
+              return console.log(err.message);
+            }
+            console.log(`A row has been updated in users with rowId ${this.lastID}`);
+          });
+        }
+      });
+      const token = await jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '7d' });
+      res.cookie('token', token, { httpOnly: (process.env.SECURE == "true"), secure: (process.env.SECURE == true), signed: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
+      res.redirect("/");
+  } catch (error) {
+      console.log('Error', error);
+      return res.send('An error occurred while processing your request.');
+  }
+});
 
 async function fetchGame(url, provider, id) {
   if (provider === "Armor Games") {
@@ -76,62 +150,6 @@ async function fetchGame(url, provider, id) {
   //};
   }
 }
-
-var scopes = ['identify'];
-app.use(cookieParser(process.env.SESSION_SECRET));
-
-db.serialize(() => {
-  db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, name TEXT UNIQUE, userid BIGINT)');
-  db.run('CREATE TABLE IF NOT EXISTS game_activity (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, gameName TEXT, gameId, INTEGER, playTime DATETIME DEFAULT CURRENT_TIMESTAMP)');
-  //db.run('CREATE TABLE IF NOT EXISTS starredgames (id INTEGER PRIMARY KEY AUTOINCREMENT, userId INTEGER, gameId INTEGER, provider TEXT, starTime DATETIME DEFAULT CURRENT_TIMESTAMP)');
-});
-
-app.get('/auth/discord', (req, res) => {
-  res.redirect(`https://discord.com/api/oauth2/authorize?client_id=${process.env.DISCORD_CLIENT_ID}&redirect_uri=${process.env.DISCORD_CALLBACK_URL}&response_type=code&scope=${scopes.join('%20')}`);
-});
-
-app.get('/auth/discord/callback', async (req, res) => {
-  const code = req.query.code;
-  const params = new URLSearchParams();
-  params.append('client_id', process.env.DISCORD_CLIENT_ID);
-  params.append('client_secret', process.env.DISCORD_CLIENT_SECRET);
-  params.append('grant_type', 'authorization_code');
-  params.append('code', code);
-  params.append('redirect_uri', process.env.DISCORD_CALLBACK_URL);
-
-  try {
-      const response = await fetch('https://discord.com/api/oauth2/token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: new URLSearchParams(params)
-      });
-      if (!response.ok) {
-        throw new Error(`Failed to fetch data from Discord API (${response.status} ${response.statusText})`);
-      }
-      const responsejson = await response.json();
-      const userDataResponse = await fetch('https://discord.com/api/users/@me', {
-        headers: {
-          authorization: `${responsejson.token_type} ${responsejson.access_token}`
-        }
-      });
-      const user = await userDataResponse.json();
-      console.log(user);
-      db.run('INSERT INTO users (username, name, userid) VALUES (?, ?, ?)', [user.username, user.global_name, user.id], function(err) {
-        if (err) {
-          return console.log(err.message);
-        }
-        console.log(`A row has been inserted to users with rowId ${this.lastID}`);
-      });
-      const token = await jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '7d' });
-      res.cookie('token', token, { httpOnly: (process.env.SECURE == "true"), secure: (process.env.SECURE == true), maxAge: 7 * 24 * 60 * 60 * 1000 });
-      res.redirect("/");
-  } catch (error) {
-      console.log('Error', error);
-      return res.send('An error occurred while processing your request.');
-}
-});
 
 async function updateCache() {
   fetch('https://armorgames.com/service/game-search', {
@@ -340,8 +358,6 @@ app.get('/crazygames', async (req, res) => {
     res.send(html);
   };
 });
-
-app.use(express.static(path.join(__dirname, 'public_html')));
 
 app.get('/api/search', async (req, res) => {
   console.log('Query:', req.query)
@@ -588,6 +604,44 @@ app.get('/proxy', async (req, res) => {
 //    });
 //  }
 //});
+
+app.get('/', async (req, res) => {
+  const token = req.signedCookies.token;
+  if (token === undefined) {
+    res.render(path.join(__dirname, 'views', 'index.html.ejs'), { token: undefined });
+  } else if (token !== undefined) {
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+      if (err) {
+        res.render(path.join(__dirname, 'views', 'index.html.ejs'), { token: undefined });
+      } else {
+        res.render(path.join(__dirname, 'views', 'index.html.ejs'), { token: token });
+      }
+    });
+  }
+});
+
+app.get('/:page', async (req, res, next) => {
+  const path = path.join(__dirname, 'views', req.params.page)
+  const token = req.signedCookies.token;
+  await fs.readFile(path, 'utf8', (err, data) => {
+    if (err) {
+      return next();
+    }
+    if (token === undefined) {
+      res.render(path);
+    } else if (token !== undefined) {
+      jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) {
+          res.render(path, { token: undefined });
+        } else {
+          res.render(path, { token: token });
+        }
+      });
+    }
+  });
+});
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

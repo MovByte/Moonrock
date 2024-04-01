@@ -2,11 +2,11 @@
 * {
     box-sizing: border-box;
 }
-/*body {
+body {
     background-image: url(images/moon.jpg); 
     background-repeat: no-repeat;
     background-size: cover;
-}*/
+}
 section button {
     padding: 0;
     border: none;

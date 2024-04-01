@@ -13,7 +13,9 @@
         <div id="navbar">
             <a onclick="localStorage.setItem('view', 'card')" id="cardViewButton">Card</a>
             <a onclick="localStorage.setItem('view', 'list')" id="listViewButton">List</a>
+            <% if (token === undefined) { %>
             <a href="auth/discord" id="login">Login</a>
+            <% } %>
         </div>
     </section>
     <container id="searching">

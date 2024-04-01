@@ -12,7 +12,9 @@
         <button type="button"><img src="assets/images/vyper.png"></button>
         <div id="navbar">
             <a href="settings.html">Settings</a>
+            <% if (token === undefined) { %>
             <a href="auth/discord" id="login">Login</a>
+            <% }; %>
         </div>
     </section>
     <container id="settings">
