@@ -608,37 +608,35 @@ app.get('/proxy', async (req, res) => {
 app.get('/', async (req, res) => {
   const token = req.signedCookies.token;
   if (token === undefined) {
-    res.render(path.join(__dirname, 'views', 'index.html.ejs'), { token: undefined });
+    res.render('index', { token: undefined });
   } else if (token !== undefined) {
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
       if (err) {
-        res.render(path.join(__dirname, 'views', 'index.html.ejs'), { token: undefined });
+        res.render('index', { token: undefined });
       } else {
-        res.render(path.join(__dirname, 'views', 'index.html.ejs'), { token: token });
+        res.render('index', { token: token });
       }
     });
   }
 });
 
-app.get('/:page', async (req, res, next) => {
-  const path = path.join(__dirname, 'views', req.params.page)
+app.get('/:page', (req, res, next) => {
+  let page;
+  if (req.params.page.endsWith('.html')) {
+    page = req.params.page.replace(/\.html$/, '');
+  }
   const token = req.signedCookies.token;
-  await fs.readFile(path, 'utf8', (err, data) => {
-    if (err) {
-      return next();
-    }
-    if (token === undefined) {
-      res.render(path);
-    } else if (token !== undefined) {
-      jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) {
-          res.render(path, { token: undefined });
-        } else {
-          res.render(path, { token: token });
-        }
-      });
-    }
-  });
+  if (token === undefined) {
+    fs.existsSync(`views/${page}.ejs`) ? res.render(page, { token: undefined }) : next();
+  } else if (token !== undefined) {
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+      if (err) {
+        fs.existsSync(`views/${page}.ejs`) ? res.render(page, { token: undefined }) : next();
+      } else {
+        fs.existsSync(`views/${page}.ejs`) ? res.render(page, { token: token }) : next();
+      }
+    });
+  }
 });
 
 app.use(express.static(path.join(__dirname, 'public')));
