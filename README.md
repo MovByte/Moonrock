@@ -53,6 +53,6 @@ Moonrock owes its existence to the collaborative efforts of talented individuals
 
 - **g9aerospace:**
   - Contributed to frontend development and design.
-  - GitHub: [g9militantsYT](https://github.com/G9Aerospace)
+  - GitHub: [G9Aerospace](https://github.com/G9Aerospace)
   - Discord: [User Profile](https://discord.com/users/928267278540242964)
   - Website: [g9aerospace.in](https://g9aerospace.in/)
